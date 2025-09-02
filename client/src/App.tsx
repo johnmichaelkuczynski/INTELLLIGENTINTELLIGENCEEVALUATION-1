@@ -10,13 +10,22 @@ import WebSearchPage from "@/pages/WebSearchPage";
 
 import { AnalyticsPage } from "@/pages/AnalyticsPage";
 import NotFound from "@/pages/not-found";
-import { BrainCircuit, Languages, FileEdit, Globe, Bot, Brain } from "lucide-react";
+import { BrainCircuit, Languages, FileEdit, Globe, Bot, Brain, Mail } from "lucide-react";
 
 function Navigation() {
   return (
     <nav className="bg-primary text-primary-foreground py-4">
       <div className="container mx-auto flex justify-between items-center">
-        <div className="font-bold text-xl">Cognitive Analysis Platform</div>
+        <div className="flex items-center gap-6">
+          <div className="font-bold text-xl">Cognitive Analysis Platform</div>
+          <a 
+            href="mailto:contact@zhisystems.ai" 
+            className="flex items-center gap-2 hover:underline text-sm"
+          >
+            <Mail className="h-4 w-4" />
+            <span>Contact Us</span>
+          </a>
+        </div>
         <ul className="flex gap-6">
           <li>
             <Link href="/" className="flex items-center gap-2 hover:underline">
