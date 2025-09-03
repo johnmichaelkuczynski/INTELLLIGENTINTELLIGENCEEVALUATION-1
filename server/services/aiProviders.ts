@@ -103,39 +103,17 @@ function buildRewritePrompt(params: {
 }): string {
   const hasStyle = !!(params.styleText && params.styleText.trim() !== "");
   const hasContent = !!(params.contentMixText && params.contentMixText.trim() !== "");
-  const styleSample = hasStyle ? params.styleText! : `DEFAULT STYLE SAMPLE (Formal and Functional Relationships):
+  const styleSample = hasStyle ? params.styleText! : `DEFAULT STYLE SAMPLE (The Raven Paradox):
 
-There are two broad types of relationships: formal and functional.
-Formal relationships hold between descriptions. A description is any statement that can be true or false.
-Example of a formal relationship: The description that a shape is a square cannot be true unless the description that it has four equal sides is true. Therefore, a shape's being a square depends on its having four equal sides.
+Presumably, logically equivalent statements are confirmationally equivalent. In other words, if two statements entail each other, then anything that one confirms the one statement to a given degree also confirms the other statement to that degree. But this actually seems false when consider statement-pairs such as: 
 
-Functional relationships hold between events or conditions. (An event is anything that happens in time.)
-Example of a functional relationship: A plant cannot grow without water. Therefore, a plant's growth depends on its receiving water.
+(i) All ravens are black, 
+and 
+(ii) All non-black things are non-ravens, 
 
-The first type is structural, i.e., it holds between statements about features.
-The second is operational, i.e., it holds between things in the world as they act or change.
-
-Descriptions as objects of consideration
-The objects of evaluation are descriptions. Something is not evaluated unless it is described, and it is not described unless it can be stated. One can notice non-descriptions — sounds, objects, movements — but in the relevant sense one evaluates descriptions of them. 
-Relationships not known through direct observation
-Some relationships are known, not through direct observation, but through reasoning. Such relationships are structural, as opposed to observational. Examples of structural relationships are:
-
-If A, then A or B.
-
-All tools require some form of use.
-
-Nothing can be both moving and perfectly still.
-
-There are no rules without conditions.
-
-1 obviously expresses a relationship; 2–4 do so less obviously, as their meanings are:
-
-2*. A tool's being functional depends on its being usable.
-3*. An object's being both moving and still depends on contradictory conditions, which cannot occur together.
-4*. The existence of rules depends on the existence of conditions to which they apply.
-
-Structural truth and structural understanding
-Structural understanding is always understanding of relationships. Observational understanding can be either direct or indirect; the same is true of structural understanding.`;
+which, though logically equivalent, seem to confirmationally equivalent, in that a non-black non-raven confirms (ii) to a high degree but confirms (i) to no degree or at most to a low degree. 
+A number of very contrived solutions to this paradox have been proposed, all of which either deny that there is a paradox or invent ad hoc systems of logic to validate the 'solution' in question. 
+But the real solution is clear. First of all, it is only principled generalizations that can be confirmed. Supposing that you assert (i) with the intention of affirming a principled as opposed to an accidental generalization, you are saying that instances of the property of being a raven grounds or causes instances of blackness. Read thus, (i) is most certainly not equivalent with (ii) or with any variation thereof. Be it noted that while there is a natural nomic or causal reading ...[Truncated]`;
 
   let prompt = `Rewrite the text below so that its style matches, at a granular level, the style of the following style sample:\n"${styleSample}"\n\n`;
 
