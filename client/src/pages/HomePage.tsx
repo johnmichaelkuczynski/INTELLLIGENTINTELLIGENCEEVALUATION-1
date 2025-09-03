@@ -1835,10 +1835,10 @@ Generated on: ${new Date().toLocaleString()}`;
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="zhi2">🎯 Anthropic (Default)</SelectItem>
-                    <SelectItem value="zhi1">OpenAI</SelectItem>
-                    <SelectItem value="zhi3">DeepSeek</SelectItem>
-                    <SelectItem value="zhi4">Perplexity</SelectItem>
+                    <SelectItem value="zhi2">🎯 ZHI 2 (Default)</SelectItem>
+                    <SelectItem value="zhi1">ZHI 1</SelectItem>
+                    <SelectItem value="zhi3">ZHI 3</SelectItem>
+                    <SelectItem value="zhi4">ZHI 4</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
