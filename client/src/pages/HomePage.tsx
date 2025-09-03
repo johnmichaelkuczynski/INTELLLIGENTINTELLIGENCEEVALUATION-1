@@ -259,9 +259,11 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
       return;
     }
 
-    // Reset any previous streaming state
+    // Reset any previous streaming state and clear previous analysis results
     setIsStreaming(false);
     setStreamingContent('');
+    setAnalysisA(null); // Clear previous intelligence analysis
+    setShowResults(true); // Ensure results section is visible
     
     // Start REAL-TIME streaming for case assessment
     setIsStreaming(true);
@@ -323,13 +325,16 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
       const caseAssessmentData = parseScores(fullResponse);
       setCaseAssessmentResult(caseAssessmentData);
       
-      // INTEGRATE CASE ASSESSMENT INTO MAIN ANALYSIS
-      if (analysisA) {
-        setAnalysisA({
-          ...analysisA,
-          caseAssessment: caseAssessmentData
-        });
-      }
+      // CREATE NEW ANALYSIS OBJECT WITH CASE ASSESSMENT AS PRIMARY RESULT
+      setAnalysisA({
+        id: Date.now(),
+        formattedReport: fullResponse,
+        overallScore: caseAssessmentData.overallCaseScore,
+        provider: provider,
+        analysis: fullResponse,
+        summary: fullResponse,
+        caseAssessment: caseAssessmentData
+      });
       
       // NO POPUP - Results are now in main report only
       
@@ -481,13 +486,16 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
       setFictionAssessmentResult(fictionAssessmentData);
       setCurrentFictionDocument(documentId);
       
-      // INTEGRATE FICTION ASSESSMENT INTO MAIN ANALYSIS
-      if (analysisA) {
-        setAnalysisA({
-          ...analysisA,
-          fictionAssessment: fictionAssessmentData
-        });
-      }
+      // CREATE NEW ANALYSIS OBJECT WITH FICTION ASSESSMENT AS PRIMARY RESULT  
+      setAnalysisA({
+        id: Date.now(),
+        formattedReport: fullResponse,
+        overallScore: fictionAssessmentData.overallFictionScore,
+        provider: provider,
+        analysis: fullResponse,
+        summary: fullResponse,
+        fictionAssessment: fictionAssessmentData
+      });
       
       // NO POPUP - Results are now in main report only
       
