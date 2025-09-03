@@ -294,7 +294,7 @@ const PhilosophicalIntelligenceReport: React.FC<PhilosophicalIntelligenceReportP
                 <Scale className="w-5 h-5" />
               </div>
               How Well Does It Make Its Case?
-              <Badge className="bg-white/20 text-white text-lg px-3 py-1">
+              <Badge className="bg-white/10 text-white text-2xl px-6 py-3 font-black">
                 {caseAssessment.overallCaseScore || 0}/100
               </Badge>
             </CardTitle>
@@ -332,7 +332,7 @@ const PhilosophicalIntelligenceReport: React.FC<PhilosophicalIntelligenceReportP
                 <h4 className="font-semibold mb-3 text-orange-700 dark:text-orange-300">Detailed Case Assessment</h4>
                 <div className="prose prose-sm max-w-none text-gray-700 dark:text-gray-300">
                   <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                    {caseAssessment.detailedAssessment}
+                    {cleanAIResponse(caseAssessment.detailedAssessment)}
                   </div>
                 </div>
               </div>
