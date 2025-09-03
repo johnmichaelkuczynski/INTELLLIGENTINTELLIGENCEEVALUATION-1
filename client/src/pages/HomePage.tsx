@@ -2242,41 +2242,6 @@ Generated on: ${new Date().toLocaleString()}`;
               </Select>
             </div>
 
-            {/* Style Presets Checkboxes */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Style Instructions (Check any combination)
-              </label>
-              <div className="max-h-60 overflow-y-auto border rounded-lg p-3 bg-gray-50 dark:bg-gray-700">
-                {Object.entries(stylePresets).map(([categoryName, presets]: [string, any]) => (
-                  <div key={categoryName} className="mb-4">
-                    <div className={`text-sm font-bold mb-2 ${categoryName === 'CRITICAL_FOR_HUMANIZATION' ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'} uppercase`}>
-                      {categoryName === 'CRITICAL_FOR_HUMANIZATION' ? '⭐ CRITICAL FOR HUMANIZATION (1-8)' : categoryName.replace(/_/g, ' ')}
-                    </div>
-                    {typeof presets === 'object' && Object.entries(presets).map(([presetName, description]: [string, any]) => (
-                      <div key={presetName} className="flex items-start space-x-2 mb-2">
-                        <input
-                          type="checkbox"
-                          id={presetName}
-                          checked={selectedStylePresets.includes(presetName)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setSelectedStylePresets([...selectedStylePresets, presetName]);
-                            } else {
-                              setSelectedStylePresets(selectedStylePresets.filter(p => p !== presetName));
-                            }
-                          }}
-                          className="mt-1"
-                        />
-                        <label htmlFor={presetName} className="text-xs text-gray-600 dark:text-gray-400">
-                          <span className="font-semibold">{presetName}:</span> {description}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </div>
             
             <Textarea
               placeholder="Enter human writing style sample to mimic..."
