@@ -15,7 +15,9 @@ import { FictionComparisonModal } from "@/components/FictionComparisonModal";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Brain, Trash2, FileEdit, Loader2, Zap, Clock } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Brain, Trash2, FileEdit, Loader2, Zap, Clock, Sparkles } from "lucide-react";
 import { analyzeDocument, compareDocuments, checkForAI } from "@/lib/analysis";
 import { AnalysisMode, DocumentInput as DocumentInputType, AIDetectionResult, DocumentAnalysis, DocumentComparison } from "@/lib/types";
 
@@ -67,11 +69,39 @@ const HomePage: React.FC = () => {
   const [currentFictionDocument, setCurrentFictionDocument] = useState<"A" | "B">("A");
   const [isFictionAssessmentLoading, setIsFictionAssessmentLoading] = useState(false);
   const [fictionAssessmentResult, setFictionAssessmentResult] = useState<any>(null);
+
+  // State for maximize intelligence feature
+  const [maximizeIntelligenceModalOpen, setMaximizeIntelligenceModalOpen] = useState(false);
+  const [customInstructions, setCustomInstructions] = useState("");
+  const [isMaximizeIntelligenceLoading, setIsMaximizeIntelligenceLoading] = useState(false);
+  const [rewriteResult, setRewriteResult] = useState<string>("");
   
   
   // Streaming state for real-time analysis
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingContent, setStreamingContent] = useState('');
+
+  // Default instructions for maximize intelligence
+  const defaultInstructions = `REWRITE IN SUCH THAT THE RESULTING DOCUMENT SCORES MAXIMALLY HIGH ON EACH OF THE FOLLOWING QUESTIONS (SO FAR AS THAT IS POSSIBLE WITHOUT TOTALLY CHANGING THE CONTENT), THE QUESTIONS IN QUESTION BEING:
+
+IS IT INSIGHTFUL?
+DOES IT DEVELOP POINTS? (OR, IF IT IS A SHORT EXCERPT, IS THERE EVIDENCE THAT IT WOULD DEVELOP POINTS IF EXTENDED)?
+IS THE ORGANIZATION MERELY SEQUENTIAL (JUST ONE POINT AFTER ANOTHER, LITTLE OR NO LOGICAL SCAFFOLDING)? OR ARE THE IDEAS ARRANGED, NOT JUST SEQUENTIALLY BUT HIERARCHICALLY?
+IF THE POINTS IT MAKES ARE NOT INSIGHTFUL, DOES IT OPERATE SKILLFULLY WITH CANONS OF LOGIC/REASONING.
+ARE THE POINTS CLICHES? OR ARE THEY "FRESH"?
+DOES IT USE TECHNICAL JARGON TO OBFUSCATE OR TO RENDER MORE PRECISE?
+IS IT ORGANIC? DO POINTS DEVELOP IN AN ORGANIC, NATURAL WAY? DO THEY 'UNFOLD'? OR ARE THEY FORCED AND ARTIFICIAL?
+DOES IT OPEN UP NEW DOMAINS? OR, ON THE CONTRARY, DOES IT SHUT OFF INQUIRY (BY CONDITIONALIZING FURTHER DISCUSSION OF THE MATTERS ON ACCEPTANCE OF ITS INTERNAL AND POSSIBLY VERY FAULTY LOGIC)?
+IS IT ACTUALLY INTELLIGENT OR JUST THE WORK OF SOMEBODY WHO, JUDGING BY THE SUBJECT-MATTER, IS PRESUMED TO BE INTELLIGENT (BUT MAY NOT BE)?
+IS IT REAL OR IS IT PHONY?
+DO THE SENTENCES EXHIBIT COMPLEX AND COHERENT INTERNAL LOGIC?
+IS THE PASSAGE GOVERNED BY A STRONG CONCEPT? OR IS THE ONLY ORGANIZATION DRIVEN PURELY BY EXPOSITORY (AS OPPOSED TO EPISTEMIC) NORMS?
+IS THERE SYSTEM-LEVEL CONTROL OVER IDEAS? IN OTHER WORDS, DOES THE AUTHOR SEEM TO RECALL WHAT HE SAID EARLIER AND TO BE IN A POSITION TO INTEGRATE IT INTO POINTS HE HAS MADE SINCE THEN?
+ARE THE POINTS 'REAL'? ARE THEY FRESH? OR IS SOME INSTITUTION OR SOME ACCEPTED VEIN OF PROPAGANDA OR ORTHODOXY JUST USING THE AUTHOR AS A MOUTH PIECE?
+IS THE WRITING EVASIVE OR DIRECT?
+ARE THE STATEMENTS AMBIGUOUS?
+DOES THE PROGRESSION OF THE TEXT DEVELOP ACCORDING TO WHO SAID WHAT OR ACCORDING TO WHAT ENTAILS OR CONFIRMS WHAT?
+DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK OF IDEAS?`;
   
   // State for LLM provider
   const [selectedProvider, setSelectedProvider] = useState<LLMProvider>("zhi1");
@@ -471,6 +501,46 @@ const HomePage: React.FC = () => {
     setFictionComparisonModalOpen(true);
   };
 
+  // Handler for maximize intelligence
+  const handleMaximizeIntelligence = async () => {
+    if (!documentA.content.trim()) {
+      alert("Please provide document content first.");
+      return;
+    }
+
+    setIsMaximizeIntelligenceLoading(true);
+    try {
+      const instructionsToUse = customInstructions.trim() || defaultInstructions;
+      
+      const response = await fetch('/api/intelligent-rewrite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: documentA.content,
+          instructions: instructionsToUse,
+          provider: selectedProvider === "all" ? "zhi1" : selectedProvider
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Rewrite failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setRewriteResult(data.rewrittenText || data.result || "No rewrite result returned");
+      
+      // Update document A with the rewritten content
+      setDocumentA(prev => ({ ...prev, content: data.rewrittenText || data.result || prev.content }));
+      
+    } catch (error) {
+      console.error('Maximize intelligence error:', error);
+      alert(error instanceof Error ? error.message : "Failed to maximize intelligence. Please try again.");
+    } finally {
+      setIsMaximizeIntelligenceLoading(false);
+      setMaximizeIntelligenceModalOpen(false);
+    }
+  };
+
   // Handler for analyzing documents - FIXED MAIN ANALYSIS
   // Helper function to get content for analysis based on chunk selection
   const getContentForAnalysis = (document: DocumentInputType): string => {
@@ -822,6 +892,19 @@ const HomePage: React.FC = () => {
               </span>
             </Button>
           )}
+
+          {/* Maximize Intelligence Button - only for single document mode */}
+          {mode === "single" && (
+            <Button
+              onClick={() => setMaximizeIntelligenceModalOpen(true)}
+              className="px-6 py-3 bg-emerald-600 text-white rounded-md font-semibold hover:bg-emerald-700 flex items-center"
+              disabled={!documentA.content.trim()}
+              data-testid="button-maximize-intelligence"
+            >
+              <Sparkles className="h-5 w-5 mr-2" />
+              <span>Maximize Intelligence</span>
+            </Button>
+          )}
           
           {/* Comparison Button - only for compare mode */}
           {mode === "compare" && (
@@ -983,6 +1066,71 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Maximize Intelligence Modal */}
+      <Dialog open={maximizeIntelligenceModalOpen} onOpenChange={setMaximizeIntelligenceModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-emerald-600" />
+              Maximize Intelligence
+            </DialogTitle>
+            <DialogDescription>
+              Customize rewrite instructions to maximize intelligence scores, or use our default optimization criteria.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-2 block">
+                Custom Instructions (optional)
+              </label>
+              <Textarea
+                value={customInstructions}
+                onChange={(e) => setCustomInstructions(e.target.value)}
+                placeholder="Enter custom rewrite instructions here. If left empty, default optimization criteria will be used."
+                className="min-h-[120px]"
+                data-testid="textarea-custom-instructions"
+              />
+            </div>
+            
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h4 className="text-sm font-medium text-gray-700 mb-2">Default Instructions (used if custom field is empty):</h4>
+              <div className="text-xs text-gray-600 max-h-40 overflow-y-auto whitespace-pre-wrap">
+                {defaultInstructions}
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setMaximizeIntelligenceModalOpen(false)}
+              data-testid="button-cancel-maximize"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleMaximizeIntelligence}
+              disabled={isMaximizeIntelligenceLoading}
+              className="bg-emerald-600 hover:bg-emerald-700"
+              data-testid="button-confirm-maximize"
+            >
+              {isMaximizeIntelligenceLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Rewriting...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Maximize Intelligence
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Chat Dialog - Always visible below everything */}
       <ChatDialog 
