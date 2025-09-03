@@ -121,7 +121,7 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
   const [boxCScore, setBoxCScore] = useState<number | null>(null);
   const [humanizerCustomInstructions, setHumanizerCustomInstructions] = useState("");
   const [selectedStylePresets, setSelectedStylePresets] = useState<string[]>([]);
-  const [selectedWritingSample, setSelectedWritingSample] = useState("");
+  const [selectedWritingSample, setSelectedWritingSample] = useState("Content-Neutral|Formal and Functional Relationships");
   const [humanizerProvider, setHumanizerProvider] = useState<LLMProvider>("zhi2"); // Anthropic default
   const [isHumanizerLoading, setIsHumanizerLoading] = useState(false);
   const [isReRewriteLoading, setIsReRewriteLoading] = useState(false);
@@ -142,7 +142,6 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
           // Set default to "Formal and Functional Relationships" (CONTENT-NEUTRAL default)
           if (data.samples["CONTENT-NEUTRAL"] && data.samples["CONTENT-NEUTRAL"]["Formal and Functional Relationships"]) {
             setBoxB(data.samples["CONTENT-NEUTRAL"]["Formal and Functional Relationships"]);
-            setSelectedWritingSample("Formal and Functional Relationships");
           }
         }
       } catch (error) {

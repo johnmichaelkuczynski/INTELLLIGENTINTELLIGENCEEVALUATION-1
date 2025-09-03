@@ -251,7 +251,7 @@ export async function performHumanization(request: HumanizerRequest): Promise<Hu
 
 // Build humanization prompt
 function buildHumanizationPrompt(aiText: string, styleText: string, customInstructions?: string, stylePresets?: string[]): string {
-  let prompt = `REWRITE WHAT IS IN BOX A SO THAT IT IS EXACTLY IN THE STYLE OF WHAT IS IN BOX B.
+  let prompt = `REWRITE BOX A TO EXACTLY MATCH THE STYLE OF BOX B.
 
 BOX A:
 """
@@ -263,7 +263,7 @@ BOX B:
 ${styleText}
 """
 
-Rewrite Box A content at the most granular level possible to match Box B's exact style.`;
+REWRITE BOX A TO EXACTLY MATCH BOX B'S STYLE AT THE MOST GRANULAR LEVEL.`;
 
   if (stylePresets && stylePresets.length > 0) {
     prompt += `\n\nSTYLE TECHNIQUES TO APPLY:`;
