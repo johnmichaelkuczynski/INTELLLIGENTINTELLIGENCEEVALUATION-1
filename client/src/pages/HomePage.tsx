@@ -2086,6 +2086,377 @@ Generated on: ${new Date().toLocaleString()}`;
       </div>
 
 
+      {/* ==============================================================================
+          GPT BYPASS HUMANIZER - Complete Implementation Below Existing Platform
+          ============================================================================== */}
+      
+      <div className="mt-16 border-t border-gray-200 dark:border-gray-700 pt-8">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-red-600 bg-clip-text text-transparent mb-4">
+            GPT Bypass Humanizer
+          </h1>
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Transform AI-generated content using surgical precision style matching. 
+            Rewrite Box A to exactly match the writing style of Box B at a granular level.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Box A - AI Text to Humanize */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <div className="w-6 h-6 bg-red-100 dark:bg-red-900 rounded flex items-center justify-center">
+                  <span className="text-red-600 dark:text-red-400 font-bold text-sm">A</span>
+                </div>
+                AI Text to Humanize
+              </h3>
+              {boxAScore !== null && (
+                <Badge variant={boxAScore > 70 ? "default" : "destructive"}>
+                  {boxAScore}% Human
+                </Badge>
+              )}
+            </div>
+            <Textarea
+              placeholder="Paste your AI-generated text here that needs to be humanized..."
+              value={boxA}
+              onChange={(e) => {
+                setBoxA(e.target.value);
+                // Auto-evaluate after typing stops
+                debounce(() => evaluateTextAI(e.target.value, setBoxAScore), 2000)();
+              }}
+              className="min-h-[300px] text-sm"
+              data-testid="input-box-a"
+            />
+            <div className="flex gap-2 mt-4">
+              <input
+                type="file"
+                accept=".txt,.pdf,.doc,.docx"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFileUpload(file, setBoxA);
+                }}
+                className="hidden"
+                id="upload-a"
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => document.getElementById('upload-a')?.click()}
+                data-testid="button-upload-a"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Upload File
+              </Button>
+              {boxA.split(' ').length > 500 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleChunkText(boxA)}
+                  data-testid="button-chunk-a"
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  Chunk Text
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Box B - Human Style Sample */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900 rounded flex items-center justify-center">
+                  <span className="text-blue-600 dark:text-blue-400 font-bold text-sm">B</span>
+                </div>
+                Human Style Sample
+              </h3>
+              {boxBScore !== null && (
+                <Badge variant={boxBScore > 70 ? "default" : "destructive"}>
+                  {boxBScore}% Human
+                </Badge>
+              )}
+            </div>
+            
+            <Select
+              value={selectedWritingSample}
+              onValueChange={(value) => {
+                setSelectedWritingSample(value);
+                const [category, name] = value.split('|');
+                if (writingSamples[category] && writingSamples[category][name]) {
+                  setBoxB(writingSamples[category][name]);
+                  // Auto-evaluate
+                  setTimeout(() => {
+                    evaluateTextAI(writingSamples[category][name], setBoxBScore);
+                  }, 500);
+                }
+              }}
+              data-testid="select-writing-sample"
+            >
+              <SelectTrigger className="mb-4">
+                <SelectValue placeholder="Select writing sample..." />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.keys(writingSamples).map((category) => (
+                  <div key={category}>
+                    <div className="px-2 py-1 text-sm font-semibold text-gray-500 dark:text-gray-400">
+                      {category}
+                    </div>
+                    {Object.keys(writingSamples[category]).map((name) => (
+                      <SelectItem key={`${category}|${name}`} value={`${category}|${name}`}>
+                        {name}
+                      </SelectItem>
+                    ))}
+                  </div>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Textarea
+              placeholder="Enter human writing style sample to mimic..."
+              value={boxB}
+              onChange={(e) => {
+                setBoxB(e.target.value);
+                setSelectedWritingSample(""); // Clear dropdown when manually editing
+                // Auto-evaluate after typing stops
+                debounce(() => evaluateTextAI(e.target.value, setBoxBScore), 2000)();
+              }}
+              className="min-h-[300px] text-sm"
+              data-testid="input-box-b"
+            />
+            <div className="flex gap-2 mt-4">
+              <input
+                type="file"
+                accept=".txt,.pdf,.doc,.docx"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFileUpload(file, setBoxB);
+                }}
+                className="hidden"
+                id="upload-b"
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => document.getElementById('upload-b')?.click()}
+                data-testid="button-upload-b"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Upload File
+              </Button>
+            </div>
+          </div>
+
+          {/* Box C - Humanized Output */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <div className="w-6 h-6 bg-green-100 dark:bg-green-900 rounded flex items-center justify-center">
+                  <span className="text-green-600 dark:text-green-400 font-bold text-sm">C</span>
+                </div>
+                Humanized Output
+              </h3>
+              <div className="flex items-center gap-2">
+                {boxCScore !== null && (
+                  <Badge variant={boxCScore > 70 ? "default" : "destructive"}>
+                    {boxCScore}% Human
+                  </Badge>
+                )}
+                {boxC && (
+                  <div className="flex gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => downloadHumanizerResult('txt')}
+                      data-testid="button-download-txt"
+                    >
+                      <Download className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+            <Textarea
+              placeholder="Humanized text will appear here..."
+              value={boxC}
+              onChange={(e) => setBoxC(e.target.value)}
+              className="min-h-[300px] text-sm"
+              readOnly={isHumanizerLoading}
+              data-testid="output-box-c"
+            />
+            {isHumanizerLoading && (
+              <div className="flex items-center justify-center mt-4">
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                <span className="text-sm text-gray-600 dark:text-gray-400">Humanizing with surgical precision...</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Control Panel */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-8">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Humanization Controls</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {/* Provider Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                AI Provider
+              </label>
+              <Select
+                value={humanizerProvider}
+                onValueChange={(value) => setHumanizerProvider(value as any)}
+                data-testid="select-provider"
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="zhi2">Anthropic Claude</SelectItem>
+                  <SelectItem value="zhi1">OpenAI GPT-4</SelectItem>
+                  <SelectItem value="zhi3">DeepSeek</SelectItem>
+                  <SelectItem value="perplexity">Perplexity</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Style Presets */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Style Presets
+              </label>
+              <Select
+                value={selectedStylePresets[0] || ""}
+                onValueChange={(value) => {
+                  if (value && !selectedStylePresets.includes(value)) {
+                    setSelectedStylePresets([...selectedStylePresets, value]);
+                  }
+                }}
+                data-testid="select-presets"
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Add style preset..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.keys(stylePresets).map((preset) => (
+                    <SelectItem key={preset} value={preset}>
+                      {preset}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              {selectedStylePresets.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {selectedStylePresets.map((preset) => (
+                    <Badge
+                      key={preset}
+                      variant="secondary"
+                      className="cursor-pointer"
+                      onClick={() => setSelectedStylePresets(prev => prev.filter(p => p !== preset))}
+                      data-testid={`badge-preset-${preset}`}
+                    >
+                      {preset} ×
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Custom Instructions */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Custom Instructions
+              </label>
+              <Textarea
+                placeholder="Add specific rewriting instructions..."
+                value={humanizerCustomInstructions}
+                onChange={(e) => setHumanizerCustomInstructions(e.target.value)}
+                className="h-16 text-sm"
+                data-testid="input-custom-instructions"
+              />
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-wrap gap-4 items-center">
+            <Button
+              onClick={handleHumanize}
+              disabled={!boxA.trim() || !boxB.trim() || isHumanizerLoading}
+              size="lg"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              data-testid="button-humanize"
+            >
+              {isHumanizerLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <Zap className="w-4 h-4 mr-2" />
+              )}
+              Humanize with Surgical Precision
+            </Button>
+
+            <Button
+              onClick={handleReRewrite}
+              disabled={!boxC.trim() || !boxB.trim() || isReRewriteLoading}
+              variant="outline"
+              size="lg"
+              data-testid="button-re-rewrite"
+            >
+              {isReRewriteLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <RefreshCw className="w-4 h-4 mr-2" />
+              )}
+              Re-Rewrite (Recursive)
+            </Button>
+
+            <Button
+              onClick={() => {
+                setBoxA("");
+                setBoxB("");
+                setBoxC("");
+                setBoxAScore(null);
+                setBoxBScore(null);
+                setBoxCScore(null);
+                setSelectedStylePresets([]);
+                setHumanizerCustomInstructions("");
+                setSelectedWritingSample("");
+              }}
+              variant="outline"
+              data-testid="button-clear-all"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Clear All
+            </Button>
+          </div>
+        </div>
+
+        {/* Instructions Panel */}
+        <div className="bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">How to Use GPT Bypass Humanizer</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+            <div>
+              <h4 className="font-semibold text-red-600 dark:text-red-400 mb-2">📝 Box A: AI Text</h4>
+              <p className="text-gray-600 dark:text-gray-400">
+                Paste your AI-generated content that needs to be humanized. The system will automatically analyze it for AI detection.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-blue-600 dark:text-blue-400 mb-2">✍️ Box B: Style Sample</h4>
+              <p className="text-gray-600 dark:text-gray-400">
+                Choose a human writing sample or paste your own. The AI will surgically match this style at a granular level.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-green-600 dark:text-green-400 mb-2">🎯 Box C: Humanized Result</h4>
+              <p className="text-gray-600 dark:text-gray-400">
+                Your humanized text appears here with automatic GPTZero evaluation. Use "Re-Rewrite" for recursive improvement.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Chat Dialog - Always visible below everything */}
       <ChatDialog 
         currentDocument={documentA.content}

@@ -5,12 +5,15 @@ import {
   userActivities, 
   cognitiveProfiles, 
   intelligentRewrites,
+  rewriteJobs,
   type User, 
   type InsertUser, 
   type InsertDocument, 
   type Document, 
   type InsertUserActivity, 
-  type InsertCognitiveProfile
+  type InsertCognitiveProfile,
+  type InsertRewriteJob,
+  type RewriteJob
 } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
@@ -36,6 +39,12 @@ export interface IStorage {
   // Cognitive profile operations
   getCognitiveProfile(userEmail: string): Promise<any>;
   updateCognitiveProfile(userEmail: string, profile: Partial<InsertCognitiveProfile>): Promise<void>;
+  
+  // GPT Bypass Humanizer operations
+  createRewriteJob(job: InsertRewriteJob): Promise<RewriteJob>;
+  getRewriteJob(id: number): Promise<RewriteJob | undefined>;
+  updateRewriteJob(id: number, updates: Partial<RewriteJob>): Promise<RewriteJob>;
+  listRewriteJobs(): Promise<RewriteJob[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -107,6 +116,41 @@ export class DatabaseStorage implements IStorage {
       .values(rewrite)
       .returning();
     return result;
+  }
+  
+  // GPT Bypass Humanizer operations
+  async createRewriteJob(insertJob: InsertRewriteJob): Promise<RewriteJob> {
+    const [job] = await db
+      .insert(rewriteJobs)
+      .values(insertJob)
+      .returning();
+    return job;
+  }
+
+  async getRewriteJob(id: number): Promise<RewriteJob | undefined> {
+    const result = await db
+      .select()
+      .from(rewriteJobs)
+      .where(eq(rewriteJobs.id, id))
+      .limit(1);
+    return result[0];
+  }
+
+  async updateRewriteJob(id: number, updates: Partial<RewriteJob>): Promise<RewriteJob> {
+    const [updated] = await db
+      .update(rewriteJobs)
+      .set(updates)
+      .where(eq(rewriteJobs.id, id))
+      .returning();
+    return updated;
+  }
+
+  async listRewriteJobs(): Promise<RewriteJob[]> {
+    return await db
+      .select()
+      .from(rewriteJobs)
+      .orderBy(eq(rewriteJobs.createdAt, rewriteJobs.createdAt)) // Simple order by
+      .limit(50);
   }
 }
 

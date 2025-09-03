@@ -2,6 +2,12 @@ import { Express, Request, Response, NextFunction } from "express";
 import multer from "multer";
 import { storage } from "./storage";
 import path from "path";
+// GPT Bypass Humanizer imports
+import { fileProcessorService } from "./services/fileProcessor";
+import { textChunkerService } from "./services/textChunker";
+import { gptZeroService } from "./services/gptZero";
+import { aiProviderService } from "./services/aiProviders";
+import { type RewriteRequest, type RewriteResponse } from "@shared/schema";
 import { extractTextFromFile } from "./api/documentParser";
 import { sendSimpleEmail } from "./api/simpleEmailService";
 import { upload as speechUpload, processSpeechToText } from "./api/simpleSpeechToText";
@@ -11,6 +17,14 @@ import { upload as speechUpload, processSpeechToText } from "./api/simpleSpeechT
 const upload = multer({ 
   storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+});
+
+// Configure multer for GPT Bypass file uploads
+const gptBypassUpload = multer({
+  dest: 'uploads/',
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50MB limit
+  },
 });
 
 interface DocumentInput {
@@ -38,6 +52,28 @@ function mapZhiToProvider(zhiName: string): string {
     'zhi3': 'deepseek',
   };
   return mapping[zhiName] || zhiName;
+}
+
+// Helper function to clean markup from AI responses
+function cleanMarkup(text: string): string {
+  return text
+    // Remove markdown bold/italic markers
+    .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1')
+    // Remove markdown headers
+    .replace(/^#{1,6}\s+/gm, '')
+    // Remove inline code backticks
+    .replace(/`([^`]+)`/g, '$1')
+    // Remove code block markers
+    .replace(/```[\s\S]*?```/g, (match) => {
+      return match.replace(/```[a-z]*\n?/gi, '').replace(/```/g, '');
+    })
+    // Remove other common markdown symbols
+    .replace(/~~([^~]+)~~/g, '$1') // strikethrough
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // links
+    .replace(/>\s+/gm, '') // blockquotes
+    // Remove excessive whitespace and clean up
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
 
 // REAL-TIME STREAMING: Case Assessment for ALL ZHI providers
@@ -1808,6 +1844,395 @@ PROVIDE A FINAL VALIDATED SCORE OUT OF 100 IN THE FORMAT: SCORE: X/100
         error: true, 
         message: error.message || "AI evaluation failed" 
       });
+    }
+  });
+
+  // ==============================================================================
+  // GPT BYPASS HUMANIZER ROUTES - Complete Implementation
+  // ==============================================================================
+
+  // File upload endpoint for GPT Bypass
+  app.post("/api/upload", gptBypassUpload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      await fileProcessorService.validateFile(req.file);
+      const processedFile = await fileProcessorService.processFile(req.file.path, req.file.originalname);
+      
+      // Analyze with GPTZero
+      const gptZeroResult = await gptZeroService.analyzeText(processedFile.content);
+      
+      // Create document record
+      const document = await storage.createDocument({
+        filename: processedFile.filename,
+        content: processedFile.content,
+        wordCount: processedFile.wordCount,
+        // aiScore: gptZeroResult.aiScore, // This field may not exist in current schema
+      });
+
+      // Generate chunks if text is long enough
+      const chunks = processedFile.wordCount > 500 
+        ? textChunkerService.chunkText(processedFile.content)
+        : [];
+
+      // Analyze chunks if they exist
+      if (chunks.length > 0) {
+        const chunkTexts = chunks.map(chunk => chunk.content);
+        const chunkResults = await gptZeroService.analyzeBatch(chunkTexts);
+        
+        chunks.forEach((chunk, index) => {
+          chunk.aiScore = chunkResults[index].aiScore;
+        });
+      }
+
+      res.json({
+        document,
+        chunks,
+        aiScore: gptZeroResult.aiScore,
+        needsChunking: processedFile.wordCount > 500,
+      });
+    } catch (error: any) {
+      console.error('File upload error:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Text analysis endpoint (for direct text input)
+  app.post("/api/analyze-text", async (req, res) => {
+    try {
+      const { text } = req.body;
+      
+      if (!text || typeof text !== 'string') {
+        return res.status(400).json({ message: "Text is required" });
+      }
+
+      const gptZeroResult = await gptZeroService.analyzeText(text);
+      const wordCount = text.trim().split(/\s+/).length;
+      
+      // Generate chunks if text is long enough
+      const chunks = wordCount > 500 ? textChunkerService.chunkText(text) : [];
+      
+      // Analyze chunks if they exist
+      if (chunks.length > 0) {
+        const chunkTexts = chunks.map(chunk => chunk.content);
+        const chunkResults = await gptZeroService.analyzeBatch(chunkTexts);
+        
+        chunks.forEach((chunk, index) => {
+          chunk.aiScore = chunkResults[index].aiScore;
+        });
+      }
+
+      res.json({
+        aiScore: gptZeroResult.aiScore,
+        wordCount,
+        chunks,
+        needsChunking: wordCount > 500,
+      });
+    } catch (error: any) {
+      console.error('Text analysis error:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Main rewrite endpoint - GPT Bypass Humanizer
+  app.post("/api/rewrite", async (req, res) => {
+    try {
+      const rewriteRequest: RewriteRequest = req.body;
+      
+      // Validate request
+      if (!rewriteRequest.inputText || !rewriteRequest.provider) {
+        return res.status(400).json({ message: "Input text and provider are required" });
+      }
+
+      // Analyze input text
+      const inputAnalysis = await gptZeroService.analyzeText(rewriteRequest.inputText);
+      
+      // Create rewrite job
+      const rewriteJob = await storage.createRewriteJob({
+        inputText: rewriteRequest.inputText,
+        styleText: rewriteRequest.styleText,
+        contentMixText: rewriteRequest.contentMixText,
+        customInstructions: rewriteRequest.customInstructions,
+        selectedPresets: rewriteRequest.selectedPresets,
+        provider: rewriteRequest.provider,
+        chunks: [],
+        selectedChunkIds: rewriteRequest.selectedChunkIds,
+        mixingMode: rewriteRequest.mixingMode,
+        inputAiScore: inputAnalysis.aiScore,
+        status: "processing",
+      });
+
+      try {
+        // Perform rewrite
+        const rewrittenText = await aiProviderService.rewrite(rewriteRequest.provider, {
+          inputText: rewriteRequest.inputText,
+          styleText: rewriteRequest.styleText,
+          contentMixText: rewriteRequest.contentMixText,
+          customInstructions: rewriteRequest.customInstructions,
+          selectedPresets: rewriteRequest.selectedPresets,
+          mixingMode: rewriteRequest.mixingMode,
+        });
+
+        // Analyze output text
+        const outputAnalysis = await gptZeroService.analyzeText(rewrittenText);
+
+        // Clean markup from rewritten text
+        const cleanedRewrittenText = cleanMarkup(rewrittenText);
+
+        // Update job with results
+        await storage.updateRewriteJob(rewriteJob.id, {
+          outputText: cleanedRewrittenText,
+          outputAiScore: outputAnalysis.aiScore,
+          status: "completed",
+        });
+
+        const response: RewriteResponse = {
+          rewrittenText: cleanedRewrittenText,
+          inputAiScore: inputAnalysis.aiScore,
+          outputAiScore: outputAnalysis.aiScore,
+          jobId: rewriteJob.id.toString(),
+        };
+
+        res.json(response);
+      } catch (error) {
+        // Update job with error status
+        await storage.updateRewriteJob(rewriteJob.id, {
+          status: "failed",
+        });
+        throw error;
+      }
+    } catch (error: any) {
+      console.error('Rewrite error:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Re-rewrite endpoint
+  app.post("/api/re-rewrite/:jobId", async (req, res) => {
+    try {
+      const { jobId } = req.params;
+      const { customInstructions, selectedPresets, provider } = req.body;
+      
+      const originalJob = await storage.getRewriteJob(parseInt(jobId));
+      if (!originalJob || !originalJob.outputText) {
+        return res.status(404).json({ message: "Original job not found or incomplete" });
+      }
+
+      // Create new rewrite job using the previous output as input
+      const rewriteJob = await storage.createRewriteJob({
+        inputText: originalJob.outputText,
+        styleText: originalJob.styleText,
+        contentMixText: originalJob.contentMixText,
+        customInstructions: customInstructions || originalJob.customInstructions,
+        selectedPresets: selectedPresets || originalJob.selectedPresets,
+        provider: provider || originalJob.provider,
+        chunks: [],
+        selectedChunkIds: [],
+        mixingMode: originalJob.mixingMode,
+        inputAiScore: originalJob.outputAiScore,
+        status: "processing",
+      });
+
+      try {
+        // Perform re-rewrite
+        const rewrittenText = await aiProviderService.rewrite(provider || originalJob.provider, {
+          inputText: originalJob.outputText,
+          styleText: originalJob.styleText,
+          contentMixText: originalJob.contentMixText,
+          customInstructions: customInstructions || originalJob.customInstructions,
+          selectedPresets: selectedPresets || originalJob.selectedPresets,
+          mixingMode: originalJob.mixingMode,
+        });
+
+        // Analyze new output
+        const outputAnalysis = await gptZeroService.analyzeText(rewrittenText);
+
+        // Clean markup from output
+        const cleanedRewrittenText = cleanMarkup(rewrittenText);
+
+        // Update job with results
+        await storage.updateRewriteJob(rewriteJob.id, {
+          outputText: cleanedRewrittenText,
+          outputAiScore: outputAnalysis.aiScore,
+          status: "completed",
+        });
+
+        const response: RewriteResponse = {
+          rewrittenText: cleanedRewrittenText,
+          inputAiScore: originalJob.outputAiScore || 0,
+          outputAiScore: outputAnalysis.aiScore,
+          jobId: rewriteJob.id.toString(),
+        };
+
+        res.json(response);
+      } catch (error) {
+        await storage.updateRewriteJob(rewriteJob.id, { status: "failed" });
+        throw error;
+      }
+    } catch (error: any) {
+      console.error('Re-rewrite error:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Get rewrite job status
+  app.get("/api/jobs/:jobId", async (req, res) => {
+    try {
+      const { jobId } = req.params;
+      const job = await storage.getRewriteJob(parseInt(jobId));
+      
+      if (!job) {
+        return res.status(404).json({ message: "Job not found" });
+      }
+
+      res.json(job);
+    } catch (error: any) {
+      console.error('Get job error:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // List recent jobs
+  app.get("/api/jobs", async (req, res) => {
+    try {
+      const jobs = await storage.listRewriteJobs();
+      res.json(jobs);
+    } catch (error: any) {
+      console.error('List jobs error:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Main GPT Bypass Humanizer endpoint expected by frontend
+  app.post("/api/gpt-bypass-humanizer", async (req, res) => {
+    try {
+      const { boxA, boxB, provider, customInstructions, stylePresets, selectedChunkIds, chunks } = req.body;
+      
+      // Validate request
+      if (!boxA || !provider) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Box A text and provider are required" 
+        });
+      }
+
+      // Analyze input text
+      const inputAnalysis = await gptZeroService.analyzeText(boxA);
+      
+      // Create rewrite job
+      const rewriteJob = await storage.createRewriteJob({
+        inputText: boxA,
+        styleText: boxB,
+        contentMixText: "", // Not used in this interface
+        customInstructions,
+        selectedPresets: stylePresets,
+        provider,
+        chunks: chunks || [],
+        selectedChunkIds: selectedChunkIds || [],
+        mixingMode: "style",
+        inputAiScore: inputAnalysis.aiScore,
+        status: "processing",
+      });
+
+      try {
+        // Perform humanization
+        const humanizedText = await aiProviderService.rewrite(provider, {
+          inputText: boxA,
+          styleText: boxB,
+          customInstructions,
+          selectedPresets: stylePresets,
+          mixingMode: "style",
+        });
+
+        // Analyze output text
+        const outputAnalysis = await gptZeroService.analyzeText(humanizedText);
+
+        // Clean markup from output
+        const cleanedHumanizedText = cleanMarkup(humanizedText);
+
+        // Update job with results
+        await storage.updateRewriteJob(rewriteJob.id, {
+          outputText: cleanedHumanizedText,
+          outputAiScore: outputAnalysis.aiScore,
+          status: "completed",
+        });
+
+        res.json({
+          success: true,
+          result: {
+            humanizedText: cleanedHumanizedText,
+            originalScore: inputAnalysis.aiScore,
+            humanizedScore: outputAnalysis.aiScore,
+            jobId: rewriteJob.id,
+          },
+        });
+      } catch (error) {
+        // Update job with error status
+        await storage.updateRewriteJob(rewriteJob.id, {
+          status: "failed",
+        });
+        throw error;
+      }
+    } catch (error: any) {
+      console.error('GPT Bypass Humanizer error:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: error.message 
+      });
+    }
+  });
+
+  // Writing samples endpoint
+  app.get("/api/writing-samples", async (req, res) => {
+    try {
+      const samples = {
+        "ContentNeutral": {
+          "Formal and Functional Relationships": `Presumably, logically equivalent statements are confirmationally equivalent. In other words, if two statements entail each other, then anything that one confirms the one statement to a given degree also confirms the other statement to that degree. But this actually seems false when consider statement-pairs such as: (i) All ravens are black, and (ii) All non-black things are non-ravens, which, though logically equivalent, seem to confirmationally equivalent, in that a non-black non-raven confirms (ii) to a high degree but confirms (i) to no degree or at most to a low degree.`,
+          "Academic Analytical": `The relationship between theoretical frameworks and empirical data requires careful consideration. When examining complex phenomena, researchers must balance methodological rigor with interpretive flexibility. This approach allows for comprehensive analysis while maintaining scholarly objectivity.`,
+          "Technical Precision": `The system's architecture incorporates multiple layers of abstraction, each serving specific functional requirements. Data flow management operates through standardized interfaces, ensuring compatibility across different implementation environments while maintaining performance characteristics.`
+        },
+        "Conversational": {
+          "Casual Discussion": `You know, I've been thinking about this whole situation lately. It's pretty interesting how things work out sometimes. When you really look at it from different angles, there are always multiple ways to approach any problem. Some people prefer one method, others go completely different routes.`,
+          "Personal Reflection": `Looking back on everything that's happened, I realize there were patterns I didn't see at the time. It's funny how clarity comes with distance. What seemed so important then feels different now, more manageable somehow.`
+        },
+        "Creative": {
+          "Descriptive Narrative": `The morning light filtered through ancient windows, casting long shadows across the weathered stone floor. Each beam carried with it the weight of centuries, illuminating dust motes that danced like memories in the still air. Time seemed suspended in this place.`,
+          "Lyrical Expression": `Words fall like autumn leaves, each one carrying the essence of seasons past. They gather in corners of consciousness, waiting for the right moment to bloom again into meaning. Language breathes with its own rhythm, patient and eternal.`
+        }
+      };
+      
+      res.json({ samples });
+    } catch (error: any) {
+      console.error('Writing samples error:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Style presets endpoint
+  app.get("/api/style-presets", async (req, res) => {
+    try {
+      const presets = {
+        "Mixed cadence": "Alternate short (5–12 words) and long (20–35 words) sentences; avoid uniform rhythm.",
+        "Compression — medium (−30%)": "Trim hard; delete throat-clearing; tighten syntax. Target ≈30% shorter.",
+        "Kill stock transitions": "Delete 'Moreover/Furthermore/In conclusion' everywhere.",
+        "Hedge once": "Use exactly one hedge: probably/roughly/more or less.",
+        "Drop intensifiers": "Remove 'very/clearly/obviously/significantly'.",
+        "Low-heat voice": "Prefer plain verbs; avoid showy synonyms.",
+        "One aside": "Allow one short parenthetical or em-dash aside; strictly factual.",
+        "Asymmetric emphasis": "Linger on the main claim; compress secondary points sharply.",
+        "Topic snap": "Allow one abrupt focus change; no recap.",
+        "No lists": "Output as continuous prose; remove bullets/numbering.",
+        "Exact nouns": "Replace ambiguous pronouns with exact nouns.",
+        "Lean & Sharp": "Compression — medium (−30%); Mixed cadence; Imply one step; Kill stock transitions",
+        "Analytic": "Clause surgery; Front-load claim; Scope check; Exact nouns; No lists",
+      };
+      
+      res.json({ presets });
+    } catch (error: any) {
+      console.error('Style presets error:', error);
+      res.status(500).json({ message: error.message });
     }
   });
 

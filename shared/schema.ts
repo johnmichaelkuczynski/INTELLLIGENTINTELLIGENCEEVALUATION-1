@@ -236,3 +236,77 @@ export type CognitiveProfile = typeof cognitiveProfiles.$inferSelect;
 
 export type InsertCaseAssessment = z.infer<typeof insertCaseAssessmentSchema>;
 export type CaseAssessment = typeof caseAssessments.$inferSelect;
+
+// GPT Bypass Humanizer tables - using serial IDs to match existing schema
+export const rewriteJobs = pgTable("rewrite_jobs", {
+  id: serial("id").primaryKey(),
+  inputText: text("input_text").notNull(),
+  styleText: text("style_text"),
+  contentMixText: text("content_mix_text"),
+  customInstructions: text("custom_instructions"),
+  selectedPresets: jsonb("selected_presets").$type<string[]>(),
+  provider: text("provider").notNull(),
+  chunks: jsonb("chunks").$type<TextChunk[]>(),
+  selectedChunkIds: jsonb("selected_chunk_ids").$type<string[]>(),
+  mixingMode: text("mixing_mode").$type<'style' | 'content' | 'both'>(),
+  outputText: text("output_text"),
+  inputAiScore: integer("input_ai_score"),
+  outputAiScore: integer("output_ai_score"),
+  status: text("status").notNull().default("pending"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertRewriteJobSchema = createInsertSchema(rewriteJobs).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertRewriteJob = z.infer<typeof insertRewriteJobSchema>;
+export type RewriteJob = typeof rewriteJobs.$inferSelect;
+
+export interface TextChunk {
+  id: string;
+  content: string;
+  startWord: number;
+  endWord: number;
+  aiScore?: number;
+}
+
+export interface InstructionPreset {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  instruction: string;
+}
+
+export interface WritingSample {
+  id: string;
+  name: string;
+  preview: string;
+  content: string;
+  category: string;
+}
+
+export interface AIProviderConfig {
+  provider: 'openai' | 'anthropic' | 'deepseek' | 'perplexity';
+  model?: string;
+}
+
+export interface RewriteRequest {
+  inputText: string;
+  styleText?: string;
+  contentMixText?: string;
+  customInstructions?: string;
+  selectedPresets?: string[];
+  provider: string;
+  selectedChunkIds?: string[];
+  mixingMode?: 'style' | 'content' | 'both';
+}
+
+export interface RewriteResponse {
+  rewrittenText: string;
+  inputAiScore: number;
+  outputAiScore: number;
+  jobId: string;
+}
