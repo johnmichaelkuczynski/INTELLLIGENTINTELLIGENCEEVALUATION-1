@@ -140,9 +140,9 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
           const data = await response.json();
           setWritingSamples(data.samples);
           // Set default to "Formal and Functional Relationships"
-          if (data.samples.ContentNeutral && data.samples.ContentNeutral["Formal and Functional Relationships"]) {
-            setBoxB(data.samples.ContentNeutral["Formal and Functional Relationships"]);
-            setSelectedWritingSample("ContentNeutral|Formal and Functional Relationships");
+          if (data.samples["Formal and Functional Relationships"]) {
+            setBoxB(data.samples["Formal and Functional Relationships"]);
+            setSelectedWritingSample("Formal and Functional Relationships");
           }
         }
       } catch (error) {
@@ -2182,12 +2182,11 @@ Generated on: ${new Date().toLocaleString()}`;
               value={selectedWritingSample}
               onValueChange={(value) => {
                 setSelectedWritingSample(value);
-                const [category, name] = value.split('|');
-                if (writingSamples[category] && writingSamples[category][name]) {
-                  setBoxB(writingSamples[category][name]);
+                if (writingSamples[value]) {
+                  setBoxB(writingSamples[value]);
                   // Auto-evaluate
                   setTimeout(() => {
-                    evaluateTextAI(writingSamples[category][name], setBoxBScore);
+                    evaluateTextAI(writingSamples[value], setBoxBScore);
                   }, 500);
                 }
               }}
@@ -2197,17 +2196,10 @@ Generated on: ${new Date().toLocaleString()}`;
                 <SelectValue placeholder="Select writing sample..." />
               </SelectTrigger>
               <SelectContent>
-                {Object.keys(writingSamples).map((category) => (
-                  <div key={category}>
-                    <div className="px-2 py-1 text-sm font-semibold text-gray-500 dark:text-gray-400">
-                      {category}
-                    </div>
-                    {Object.keys(writingSamples[category]).map((name) => (
-                      <SelectItem key={`${category}|${name}`} value={`${category}|${name}`}>
-                        {name}
-                      </SelectItem>
-                    ))}
-                  </div>
+                {Object.keys(writingSamples).map((sampleName) => (
+                  <SelectItem key={sampleName} value={sampleName}>
+                    {sampleName}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
