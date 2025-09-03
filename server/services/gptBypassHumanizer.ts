@@ -317,26 +317,37 @@ async function callOpenAI(prompt: string): Promise<string> {
 }
 
 async function callAnthropic(prompt: string): Promise<string> {
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': process.env.ANTHROPIC_API_KEY!,
-      'Content-Type': 'application/json',
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
-      model: 'claude-3-5-sonnet-20241022',
-      max_tokens: 4000,
-      messages: [{ role: 'user', content: prompt }]
-    }),
-  });
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': process.env.ANTHROPIC_API_KEY!,
+        'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-3-5-sonnet-20241022',
+        max_tokens: 4000,
+        messages: [{ role: 'user', content: prompt }]
+      }),
+    });
 
-  if (!response.ok) {
-    throw new Error(`Anthropic API error: ${response.statusText}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Anthropic API error details:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText
+      });
+      throw new Error(`Anthropic API error (${response.status}): ${errorText || response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.content[0].text.trim();
+  } catch (error) {
+    console.error('Anthropic call failed:', error);
+    throw error;
   }
-
-  const data = await response.json();
-  return data.content[0].text.trim();
 }
 
 async function callDeepSeek(prompt: string): Promise<string> {
