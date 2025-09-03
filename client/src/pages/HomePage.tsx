@@ -138,8 +138,9 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
         const response = await fetch('/api/writing-samples');
         if (response.ok) {
           const data = await response.json();
+          console.log("LOADED WRITING SAMPLES:", Object.keys(data.samples));
           setWritingSamples(data.samples);
-          // Set default to "Formal and Functional Relationships"
+          // Set default to "Sample 1"
           if (data.samples["Sample 1"]) {
             setBoxB(data.samples["Sample 1"]);
             setSelectedWritingSample("Sample 1");
@@ -2196,7 +2197,11 @@ Generated on: ${new Date().toLocaleString()}`;
                 <SelectValue placeholder="Select writing sample..." />
               </SelectTrigger>
               <SelectContent>
-                {Object.keys(writingSamples).map((sampleName) => (
+                {Object.keys(writingSamples).sort((a, b) => {
+                  const numA = parseInt(a.replace('Sample ', ''));
+                  const numB = parseInt(b.replace('Sample ', ''));
+                  return numA - numB;
+                }).map((sampleName) => (
                   <SelectItem key={sampleName} value={sampleName}>
                     {sampleName}
                   </SelectItem>
