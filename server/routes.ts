@@ -1244,7 +1244,8 @@ export async function registerRoutes(app: Express): Promise<Express> {
       
       // Call the fiction assessment service directly and return JSON
       const { performFictionAssessment } = await import('./services/fictionAssessment');
-      const result = await performFictionAssessment(text, provider);
+      const actualProvider = mapZhiToProvider(provider);
+      const result = await performFictionAssessment(text, actualProvider);
       
       console.log('Fiction Assessment Result:', result);
       res.json({
