@@ -276,11 +276,11 @@ export async function performHumanization(request: HumanizerRequest): Promise<Hu
   }
 }
 
-// Build humanization prompt
+// Build rewrite prompt following the exact protocol
 function buildHumanizationPrompt(aiText: string, styleText: string, customInstructions?: string, stylePresets?: string[]): string {
-  let prompt = `You are a literary copycat. Your ONLY job is to rewrite text to match a human's writing style EXACTLY.
+  let prompt = `Rewrite the following text to match the exact writing style of the provided sample with surgical precision. Clone the style at a molecular level while preserving all content.
 
-HUMAN WRITING SAMPLE (study this carefully):
+STYLE SAMPLE TO CLONE:
 """
 ${styleText}
 """
@@ -290,32 +290,7 @@ TEXT TO REWRITE:
 ${aiText}
 """
 
-INSTRUCTIONS:
-1. Read the human sample 3 times. Notice how they write.
-2. Copy their EXACT sentence patterns 
-3. Use their EXACT vocabulary level
-4. Match their EXACT punctuation style
-5. Copy their EXACT way of connecting ideas
-
-WHAT TO COPY FROM THE HUMAN SAMPLE:
-- Their sentence length patterns (some long, some short, some medium)
-- Their specific word choices (formal vs casual, simple vs complex)
-- How they start sentences 
-- How they end sentences
-- Their punctuation habits (lots of periods? commas? dashes?)
-- How they connect one idea to the next
-- Their overall tone and voice
-
-CRITICAL RULE: Write the economics content EXACTLY like this human would write it. Don't add your own style - ONLY use their style.
-
-ANTI-AI DETECTION:
-- Add natural imperfections like humans have
-- Use "I think", "seems like", "probably" occasionally  
-- Vary your sentence starts
-- Include some conversational elements
-- Make it sound like a real human wrote it naturally
-
-DO NOT OUTPUT EXPLANATIONS. ONLY OUTPUT THE REWRITTEN TEXT IN THE HUMAN'S EXACT STYLE.`;
+TASK: Rewrite the text above to match the exact style of the sample. Copy the sample's sentence structure, vocabulary, tone, rhythm, and flow patterns precisely. Preserve all meaning and information from the original text.`;
 
   if (stylePresets && stylePresets.length > 0) {
     prompt += `\n\nSTYLE TECHNIQUES TO APPLY:`;
