@@ -278,74 +278,44 @@ export async function performHumanization(request: HumanizerRequest): Promise<Hu
 
 // Build humanization prompt
 function buildHumanizationPrompt(aiText: string, styleText: string, customInstructions?: string, stylePresets?: string[]): string {
-  let prompt = `URGENT MISSION: You are a MASTER HUMAN WRITER whose life depends on making this AI text 100% UNDETECTABLE. GPTZero and other AI detectors MUST be completely fooled. Failure is NOT an option.
+  let prompt = `You are a literary copycat. Your ONLY job is to rewrite text to match a human's writing style EXACTLY.
 
-AI TEXT TO COMPLETELY DISGUISE:
-"""
-${aiText}
-"""
-
-HUMAN STYLE TO PERFECTLY CLONE:
+HUMAN WRITING SAMPLE (study this carefully):
 """
 ${styleText}
 """
 
-EXTREME HUMANIZATION PROTOCOL - EXECUTE ALL:
+TEXT TO REWRITE:
+"""
+${aiText}
+"""
 
-🧠 COGNITIVE MIMICRY:
-- Write like you're having a real conversation, not delivering a lecture
-- Include genuine human thought patterns: "Well, when I think about it...", "Actually, that reminds me..."
-- Add spontaneous clarifications: "I mean, what I'm getting at is..."
-- Use stream-of-consciousness moments that real humans have
+INSTRUCTIONS:
+1. Read the human sample 3 times. Notice how they write.
+2. Copy their EXACT sentence patterns 
+3. Use their EXACT vocabulary level
+4. Match their EXACT punctuation style
+5. Copy their EXACT way of connecting ideas
 
-💬 NATURAL SPEECH PATTERNS:
-- Start sentences with: "Now,", "So,", "But here's the thing,", "Look,"
-- Add filler words: "basically", "essentially", "kind of", "sort of"
-- Use colloquialisms: "a whole lot", "pretty much", "turns out"
-- Include natural pauses: "...and this is important..."
+WHAT TO COPY FROM THE HUMAN SAMPLE:
+- Their sentence length patterns (some long, some short, some medium)
+- Their specific word choices (formal vs casual, simple vs complex)
+- How they start sentences 
+- How they end sentences
+- Their punctuation habits (lots of periods? commas? dashes?)
+- How they connect one idea to the next
+- Their overall tone and voice
 
-🎯 ANTI-AI WARFARE TACTICS:
-- NEVER use perfect lists or parallel structures
-- Break grammar rules occasionally (but stay readable)
-- Add tangential thoughts that humans naturally have
-- Use inconsistent terminology (mix formal/informal randomly)
-- Include personal opinions disguised as facts
-- Add contradictory statements that humans naturally make
+CRITICAL RULE: Write the economics content EXACTLY like this human would write it. Don't add your own style - ONLY use their style.
 
-📝 SENTENCE DESTRUCTION:
-- Vary sentence length WILDLY (3 words to 40+ words)
-- Use fragments. Like this one.
-- Mix simple and complex structures randomly
-- Start sentences with conjunctions: "And another thing...", "But really..."
-- Use ellipses... for natural pauses...
+ANTI-AI DETECTION:
+- Add natural imperfections like humans have
+- Use "I think", "seems like", "probably" occasionally  
+- Vary your sentence starts
+- Include some conversational elements
+- Make it sound like a real human wrote it naturally
 
-🔥 VOCABULARY CHAOS:
-- Mix sophisticated and simple words unpredictably
-- Use regional expressions and idioms
-- Include outdated terms mixed with modern ones
-- Add emotional language: "frankly", "honestly", "to be fair"
-- Use hedge words: "somewhat", "rather", "quite", "fairly"
-
-⚡ STRUCTURAL ANARCHY:
-- Randomly change paragraph lengths
-- Add sudden topic shifts with weak transitions
-- Include parenthetical asides (like this one)
-- Use em-dashes — for dramatic effect
-- Break conventional academic structure
-
-🎭 HUMAN IMPERFECTION INJECTION:
-- Add slight redundancies humans naturally use
-- Include self-corrections: "or rather, what I mean is..."
-- Use approximations: "around", "roughly", "about"
-- Add qualifiers: "in my experience", "from what I've seen"
-- Include gentle contradictions within the same text
-
-CRITICAL MISSION OBJECTIVES:
-1. Text MUST score 85%+ HUMAN on ANY detection system
-2. Completely eliminate ALL AI-typical phrasing patterns
-3. Sound like a real human wrote this naturally
-4. Keep ALL original information but make it sound human-written
-5. Use the human sample's exact style DNA`;
+DO NOT OUTPUT EXPLANATIONS. ONLY OUTPUT THE REWRITTEN TEXT IN THE HUMAN'S EXACT STYLE.`;
 
   if (stylePresets && stylePresets.length > 0) {
     prompt += `\n\nSTYLE TECHNIQUES TO APPLY:`;
