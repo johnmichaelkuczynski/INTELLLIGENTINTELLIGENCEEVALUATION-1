@@ -283,9 +283,17 @@ async function makeDeepSeekRequest(prompt: string): Promise<string> {
 
 export async function performCaseAssessment(
   text: string,
-  provider: 'openai' | 'anthropic' | 'perplexity' | 'deepseek'
+  provider: 'openai' | 'anthropic' | 'perplexity' | 'deepseek',
+  context?: string
 ): Promise<CaseAssessmentResult> {
-  const prompt = `${CASE_ASSESSMENT_PROMPT}\n\n${text}`;
+  let prompt = CASE_ASSESSMENT_PROMPT;
+  
+  // Add context information if provided
+  if (context && context.trim()) {
+    prompt += `\n\nIMPORTANT CONTEXT: ${context.trim()}\n\nPlease adjust your evaluation approach based on this context. For example, if this is "an abstract" or "a fragment", do not penalize it for lacking full development that would be expected in a complete work.`;
+  }
+  
+  prompt += `\n\n${text}`;
   
   let response: string;
   

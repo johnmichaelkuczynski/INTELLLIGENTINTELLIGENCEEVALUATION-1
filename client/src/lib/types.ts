@@ -11,6 +11,7 @@ export interface DocumentInput {
   content: string;
   filename?: string;
   mimeType?: string;
+  context?: string; // User-provided context like "This is an abstract" or "This is a fragment of a book"
   metadata?: {
     pageCount?: number;
     info?: Record<string, any>;

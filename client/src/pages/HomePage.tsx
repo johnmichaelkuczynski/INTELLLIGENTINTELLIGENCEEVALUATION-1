@@ -275,7 +275,8 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
         },
         body: JSON.stringify({
           text: documentA.content,
-          provider: provider
+          provider: provider,
+          context: documentA.context
         }),
       });
 

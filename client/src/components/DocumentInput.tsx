@@ -50,8 +50,12 @@ const DocumentInput: React.FC<DocumentInputProps> = ({
     setDocument({ ...document, content: e.target.value });
   };
 
+  const handleContextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDocument({ ...document, context: e.target.value });
+  };
+
   const handleClearText = () => {
-    setDocument({ content: "" });
+    setDocument({ content: "", context: "" });
   };
 
   const handleFileUpload = async (file: File) => {
@@ -219,13 +223,33 @@ const DocumentInput: React.FC<DocumentInputProps> = ({
               </div>
             </div>
           ) : (
-            <Textarea
-              id={`textInput${id}`}
-              placeholder="Type, paste, or dictate your text here..."
-              className="w-full h-40 p-4 border border-gray-300 rounded-lg focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-blue-500"
-              value={document.content}
-              onChange={handleTextChange}
-            />
+            <div className="space-y-3">
+              <Textarea
+                id={`textInput${id}`}
+                placeholder="Type, paste, or dictate your text here..."
+                className="w-full h-40 p-4 border border-gray-300 rounded-lg focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-blue-500"
+                value={document.content}
+                onChange={handleTextChange}
+              />
+              
+              {/* Context Input Field */}
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                <label htmlFor={`contextInput${id}`} className="block text-sm font-medium text-gray-700 mb-2">
+                  📋 Provide Relevant Information (Optional)
+                </label>
+                <input
+                  id={`contextInput${id}`}
+                  type="text"
+                  placeholder='e.g., "This is an abstract", "This is a fragment of a book", "This is a complete essay"'
+                  className="w-full px-3 py-2 border border-yellow-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                  value={document.context || ''}
+                  onChange={handleContextChange}
+                />
+                <p className="text-xs text-gray-600 mt-1">
+                  Help the analysis understand what type of text this is for better assessment
+                </p>
+              </div>
+            </div>
           )}
 
           {/* Chunk Selection Interface */}

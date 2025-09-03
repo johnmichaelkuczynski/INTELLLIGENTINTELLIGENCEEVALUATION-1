@@ -41,12 +41,15 @@ function mapZhiToProvider(zhiName: string): string {
 }
 
 // REAL-TIME STREAMING: Case Assessment for ALL ZHI providers
-async function streamCaseAssessment(text: string, provider: string, res: any) {
-  const prompt = `Assess how well this text makes its case. Analyze argument effectiveness, proof quality, claim credibility:
-
-${text}
-
-Provide detailed analysis of the argument's strengths and weaknesses.`;
+async function streamCaseAssessment(text: string, provider: string, res: any, context?: string) {
+  let prompt = `Assess how well this text makes its case. Analyze argument effectiveness, proof quality, claim credibility:`;
+  
+  // Add context information if provided
+  if (context && context.trim()) {
+    prompt += `\n\nIMPORTANT CONTEXT: ${context.trim()}\n\nPlease adjust your evaluation approach based on this context. For example, if this is "an abstract" or "a fragment", do not penalize it for lacking full development that would be expected in a complete work.`;
+  }
+  
+  prompt += `\n\n${text}\n\nProvide detailed analysis of the argument's strengths and weaknesses.`;
 
   if (provider === 'openai') {
     // ZHI 1: OpenAI streaming
@@ -1141,7 +1144,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
   // Case assessment endpoint - REAL-TIME STREAMING
   app.post("/api/case-assessment", async (req: Request, res: Response) => {
     try {
-      const { text, provider = "zhi1" } = req.body;
+      const { text, provider = "zhi1", context } = req.body;
       
       if (!text || typeof text !== 'string') {
         return res.status(400).json({ error: "Text content is required for case assessment" });
@@ -1157,7 +1160,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
       console.log(`Starting REAL-TIME case assessment streaming with ${provider} for text of length: ${text.length}`);
       
       const actualProvider = mapZhiToProvider(provider);
-      await streamCaseAssessment(text, actualProvider, res);
+      await streamCaseAssessment(text, actualProvider, res, context);
       
     } catch (error: any) {
       console.error("Error in case assessment streaming:", error);
