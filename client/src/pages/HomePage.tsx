@@ -223,11 +223,11 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
     }
   };
 
-  const handleReRewrite = async () => {
+  const handleRehumanize = async () => {
     if (!boxC.trim() || !boxB.trim()) {
       toast({
-        title: "Missing Input",
-        description: "Both output text and style sample are required for re-rewrite.",
+        title: "Missing Content",
+        description: "Box C needs humanized text to rehumanize further.",
         variant: "destructive",
       });
       return;
@@ -240,7 +240,7 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          text: boxC,
+          text: boxC, // Use Box C output as new input for further humanization
           styleText: boxB,
           provider: humanizerProvider,
           customInstructions: humanizerCustomInstructions,
@@ -250,24 +250,25 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Re-rewrite failed');
+        throw new Error(errorData.message || 'Rehumanization failed');
       }
 
       const data = await response.json();
       if (data.success && data.result) {
+        const oldScore = boxCScore;
         setBoxC(data.result.humanizedText);
         setBoxCScore(data.result.humanizedAIScore);
         
         toast({
-          title: "Re-rewrite Complete!",
-          description: `Text re-rewritten successfully. Score: ${data.result.humanizedAIScore}% Human.`,
+          title: "Rehumanization Complete!",
+          description: `Text humanized further: ${oldScore}% → ${data.result.humanizedAIScore}% Human.`,
         });
       }
     } catch (error: any) {
-      console.error('Re-rewrite error:', error);
+      console.error('Rehumanization error:', error);
       toast({
-        title: "Re-rewrite Failed",
-        description: error.message || "An error occurred during re-rewrite.",
+        title: "Rehumanization Failed",
+        description: error.message || "An error occurred during rehumanization.",
         variant: "destructive",
       });
     } finally {
@@ -2090,21 +2091,21 @@ Generated on: ${new Date().toLocaleString()}`;
               <div className="flex flex-wrap gap-2 justify-between items-center">
                 <div className="flex gap-2">
                   <Button
-                    onClick={handleReRewrite}
+                    onClick={handleRehumanize}
                     disabled={isReRewriteLoading || !boxC.trim()}
                     variant="outline"
-                    className="border-orange-300 text-orange-700 hover:bg-orange-50"
-                    data-testid="button-re-rewrite"
+                    className="border-blue-300 text-blue-700 hover:bg-blue-50 font-semibold"
+                    data-testid="button-rehumanize"
                   >
                     {isReRewriteLoading ? (
                       <>
-                        <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                        Re-rewriting...
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Rehumanizing...
                       </>
                     ) : (
                       <>
-                        <RefreshCw className="w-3 h-3 mr-1" />
-                        Re-rewrite
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                        REHUMANIZE
                       </>
                     )}
                   </Button>
