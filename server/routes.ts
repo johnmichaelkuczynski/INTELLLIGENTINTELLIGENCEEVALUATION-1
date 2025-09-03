@@ -1,7 +1,6 @@
 import { Express, Request, Response, NextFunction } from "express";
 import multer from "multer";
 import { storage } from "./storage";
-import fictionRoutes from "./routes/fiction";
 import path from "path";
 // GPT Bypass Humanizer imports
 import { fileProcessorService } from "./services/fileProcessor";
@@ -1232,33 +1231,6 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  // Fiction Assessment API endpoint - RETURNS JSON RESULTS
-  app.post('/api/fiction-assessment', async (req, res) => {
-    try {
-      const { text, provider = 'openai' } = req.body;
-      
-      if (!text) {
-        return res.status(400).json({ error: "Text is required" });
-      }
-      
-      console.log(`Starting fiction assessment with ${provider} for text of length: ${text.length}`);
-      
-      // Call the fiction assessment service directly and return JSON
-      const { performFictionAssessment } = await import('./services/fictionAssessment');
-      const actualProvider = mapZhiToProvider(provider);
-      const result = await performFictionAssessment(text, actualProvider);
-      
-      console.log('Fiction Assessment Result:', result);
-      res.json({
-        success: true,
-        result: result
-      });
-      
-    } catch (error: any) {
-      console.error("Error in fiction assessment streaming:", error);
-      res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
-    }
-  });
 
   // Comprehensive cognitive analysis endpoint (4-phase protocol)
   app.post("/api/analyze", async (req: Request, res: Response) => {
@@ -1352,28 +1324,6 @@ export async function registerRoutes(app: Express): Promise<Express> {
 
 
   // Fiction Comparison API endpoint  
-  app.post('/api/fiction-compare', async (req, res) => {
-    try {
-      const { documentA, documentB, provider } = req.body;
-      
-      if (!documentA || !documentB || !provider) {
-        return res.status(400).json({ error: "Both documents and provider are required" });
-      }
-      
-      const { performFictionComparison } = await import('./services/fictionComparison');
-      const result = await performFictionComparison(documentA, documentB, provider);
-      
-      console.log(`Fiction comparison complete - Winner: Document ${result.winnerDocument}`);
-      
-      return res.json(result);
-    } catch (error: any) {
-      console.error("Error in fiction comparison:", error);
-      return res.status(500).json({ 
-        error: "Failed to perform fiction comparison",
-        message: error.message 
-      });
-    }
-  });
 
   // ORIGINALITY EVALUATION API endpoint
   app.post("/api/originality-evaluate", async (req: Request, res: Response) => {
@@ -2335,8 +2285,6 @@ Structural understanding is always understanding of relationships. Observational
     }
   });
 
-  // Register fiction assessment route
-  app.use("/api/assess/fiction", fictionRoutes);
 
   return app;
 }

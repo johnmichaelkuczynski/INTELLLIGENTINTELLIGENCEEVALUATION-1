@@ -50,7 +50,7 @@ const SemanticDensityAnalyzer: React.FC<SemanticDensityAnalyzerProps> = ({ text 
   const { toast } = useToast();
 
   const analyzeSemanticDensity = async () => {
-    if (!text.trim()) {
+    if (!text?.trim()) {
       toast({
         title: "No text provided",
         description: "Please provide text to analyze semantic density",
@@ -205,7 +205,7 @@ const SemanticDensityAnalyzer: React.FC<SemanticDensityAnalyzerProps> = ({ text 
         <CardContent>
           <Button 
             onClick={analyzeSemanticDensity} 
-            disabled={isAnalyzing || !text.trim()}
+            disabled={isAnalyzing || !text?.trim()}
             className="w-full"
           >
             {isAnalyzing ? "Analyzing..." : "Analyze Semantic Density"}
