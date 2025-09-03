@@ -59,7 +59,7 @@ const ProviderSelector: React.FC<ProviderSelectorProps> = ({
           >
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-green-600" />
-              <span>OpenAI</span>
+              <span>ZHI 1</span>
               {!apiStatus.openai && <span className="text-xs text-red-500 ml-2">(Unavailable)</span>}
             </div>
           </SelectItem>
@@ -70,7 +70,7 @@ const ProviderSelector: React.FC<ProviderSelectorProps> = ({
           >
             <div className="flex items-center gap-2">
               <BrainCircuit className="h-4 w-4 text-purple-600" />
-              <span>Anthropic</span>
+              <span>ZHI 2</span>
               {!apiStatus.anthropic && <span className="text-xs text-red-500 ml-2">(Unavailable)</span>}
             </div>
           </SelectItem>
@@ -81,7 +81,7 @@ const ProviderSelector: React.FC<ProviderSelectorProps> = ({
           >
             <div className="flex items-center gap-2">
               <BrainCircuit className="h-4 w-4 text-orange-600" />
-              <span>DeepSeek</span>
+              <span>ZHI 3</span>
               {!apiStatus.deepseek && <span className="text-xs text-red-500 ml-2">(Unavailable)</span>}
             </div>
           </SelectItem>
