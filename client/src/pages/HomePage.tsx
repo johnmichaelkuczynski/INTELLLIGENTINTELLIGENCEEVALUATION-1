@@ -593,6 +593,16 @@ Generated on: ${new Date().toLocaleString()}`;
     setRewriteResultsModalOpen(false);
   };
 
+  // Handler for sending rewritten text to intelligence analysis
+  const handleSendToIntelligenceAnalysis = () => {
+    if (rewriteResultData?.rewrittenText) {
+      setDocumentA(prev => ({ ...prev, content: rewriteResultData.rewrittenText }));
+      setRewriteResultsModalOpen(false);
+      // Optional: Auto-trigger intelligence analysis
+      // setTimeout(() => handleCognitiveQuick(), 100);
+    }
+  };
+
   // Handler for analyzing documents - FIXED MAIN ANALYSIS
   // Helper function to get content for analysis based on chunk selection
   const getContentForAnalysis = (document: DocumentInputType): string => {
@@ -1296,6 +1306,14 @@ Generated on: ${new Date().toLocaleString()}`;
               data-testid="button-keep-original"
             >
               Keep Original
+            </Button>
+            <Button 
+              onClick={handleSendToIntelligenceAnalysis}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+              data-testid="button-send-to-intelligence"
+            >
+              <Brain className="w-4 h-4 mr-2" />
+              Send to Intelligence Analysis
             </Button>
             <Button 
               onClick={handleUseRewrittenText}

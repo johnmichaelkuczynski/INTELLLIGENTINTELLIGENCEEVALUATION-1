@@ -516,8 +516,12 @@ export async function registerRoutes(app: Express): Promise<Express> {
       console.log(`Original text length: ${originalText.length} characters`);
       console.log(`Custom instructions: ${customInstructions || 'None'}`);
       
-      const { performIntelligentRewrite } = await import('./services/quickAnalysis');
-      const result = await performIntelligentRewrite(originalText, customInstructions, provider);
+      const { performIntelligentRewrite } = await import('./services/intelligentRewrite');
+      const result = await performIntelligentRewrite({
+        text: originalText,
+        customInstructions,
+        provider
+      });
       
       res.json({
         success: true,
