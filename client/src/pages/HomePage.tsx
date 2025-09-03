@@ -527,10 +527,10 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
       }
 
       const data = await response.json();
-      setRewriteResult(data.rewrittenText || data.result || "No rewrite result returned");
+      setRewriteResult(data.result?.rewrittenText || data.rewrittenText || "No rewrite result returned");
       
       // Update document A with the rewritten content
-      setDocumentA(prev => ({ ...prev, content: data.rewrittenText || data.result || prev.content }));
+      setDocumentA(prev => ({ ...prev, content: typeof (data.result?.rewrittenText || data.rewrittenText) === "string" ? (data.result?.rewrittenText || data.rewrittenText) : prev.content }));
       
     } catch (error) {
       console.error('Maximize intelligence error:', error);
