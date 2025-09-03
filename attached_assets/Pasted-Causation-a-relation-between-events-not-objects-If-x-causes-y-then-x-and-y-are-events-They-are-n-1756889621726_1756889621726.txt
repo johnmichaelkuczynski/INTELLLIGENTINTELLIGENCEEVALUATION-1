@@ -1,0 +1,12 @@
+Causation a relation between events, not objects
+If x causes y, then x and y are events. They are not are not rocks, trees, or snowmen. They are not things, in other words, at least not in the sense in which we will use that word.
+Though not themselves causes or effects, things have causal properties. The rock weighs three lbs.; and it is in virtue of this fact about the rock that certain events involving the rock have certain effects. But the rock per se is not a cause.
+Nor is the rock an effect. Obviously the rock’s existence is the end-result of a series of events.
+But it is these events, not the rock per se, that are appropriately described as ‘effects.’
+Notice that, while we would hesitate to describe the rock as an effect of the various events that led to its existence, we would not hesitate to describe the rock as the product of these events.
+ 
+Conditions identical with event-patterns
+Conditions, e.g. Smith’s having high blood pressure, can be causes and effects. This is because conditions are event-pluralities and therefore events in their own right.
+But not all event-pluralities are conditions: a condition is a stable pattern of events.
+For your metabolic condition to remain unchanged is for the various events constitutive of it to continue to occur within certain limits; it is for your heart to continue to beat at a certain rate; it is for the cells composing your body to be duly oxygenated at regular intervals; etc. Unless you are cryogenically frozen, for your metabolic condition to remain unchanged is not for you to undergo no metabolic changes.
+For the room’s temperature to remain constant is not for the various particles involved to undergo no change. It is for the changes that they are constantly undergoing to remain within certain limits; it is for those changes to remain such that their mean kinetic energy doesn’t change. Unless their mean kinetic energy is zero---and even then---this means that those air molecules are constantly whizzing about.

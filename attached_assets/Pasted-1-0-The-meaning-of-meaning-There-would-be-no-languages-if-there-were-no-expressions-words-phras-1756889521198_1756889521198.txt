@@ -1,0 +1,15 @@
+1.0 The meaning of “meaning”
+There would be no languages if there were no expressions (words, phrases, sentences, etc.). Nothing meaningless is an expression. For this reason, the concept of an expression must be understood in terms of the
+concept of meaning, the same therefore being true of the concept of language.
+But it isn’t much use to be told that words and sentences “have meanings,” since the word “meaning” has three different meanings, and only one of these directly relates to the nature of language.
+Meaning #1: The evidential meaning of “meaning”
+In some cases, to say that x “means” y is to say that x is evidence of y
+—that x and y are causally interrelated in such a way that, given x, it can reasonably be inferred that y. “Smith’s hacking cough means that he has a violent lung infection” means “Smith’s hacking cough is evidence that he has a violent lung infection.” And the latter means that coughs like Smith’s are causally connected to violent lung infections in such a way that it may reasonably be inferred that Smith has a violent lung infection.
+Smith’s violent lung infection is a cause of Smith’s hacking cough. But for x to be evidence to of y, it is neither necessary nor sufficient that y cause x.
+Why isn’t it necessary? First of all, causes can be evidence of their own effects. (Bill’s current drunkenness is evidence of a poor performance on his upcoming economics exam.) Second, if some event or state of affairs z is a cause of both x and y, then x can be evidence of y without being a cause or an effect of y. (Suppose that Bill is slurring his words. This is evidence that he’ll do poorly on the upcoming test. But his slurring his words is neither a cause, nor an effect, of his substandard test-performance. His drunkenness is a cause of (a) his slurred speech and (b) his imminent, substandard test-performance. And it’s because his slurred speech has a causal ancestor in common with his poor test-performance that the former is evidence of the latter.)
+Why isn’t it sufficient? Given only that the cause of Bill’s failing was that he was drunk, we can’t infer from the fact that he failed that he was drunk.
+There are many reasons why a person may fail a test. Supposing that y caused x to occur, x is evidence of y only if it can’t reasonably be supposed that anything other than y was the cause. (Only a violent lung infection could be responsible for Smith’s hacking cough, that being why the latter is evidence of the former.)
+Meaning #2: The psychological meaning of “meaning”
+When we use sentences, we mean things by them. Meaning in this sense is a psychological notion. You tell me that Sally is the most wonderful,
+ 
+decent person you’ve ever known. I respond by saying “things aren’t always as they seem.” What I mean is that Sally is devious. In other words, my intention in making this statement is to say that Sally is devious. Given that intentions are psychological entities, meaning in this sense is obviously a psychological notion.
