@@ -1,6 +1,7 @@
 import { Express, Request, Response, NextFunction } from "express";
 import multer from "multer";
 import { storage } from "./storage";
+import fictionRoutes from "./routes/fiction";
 import path from "path";
 // GPT Bypass Humanizer imports
 import { fileProcessorService } from "./services/fileProcessor";
@@ -2333,6 +2334,9 @@ Structural understanding is always understanding of relationships. Observational
       res.status(500).json({ message: error.message });
     }
   });
+
+  // Register fiction assessment route
+  app.use("/api/assess/fiction", fictionRoutes);
 
   return app;
 }

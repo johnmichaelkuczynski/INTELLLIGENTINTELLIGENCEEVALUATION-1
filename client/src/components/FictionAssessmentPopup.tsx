@@ -41,14 +41,14 @@ export function FictionAssessmentPopup({ isOpen, onClose }: FictionAssessmentPop
     setResult(null);
 
     try {
-      const response = await fetch('/api/fiction-assessment', {
+      const response = await fetch('/api/assess/fiction', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           text: fictionText.trim(),
-          provider: selectedProvider
+          preview: false
         }),
       });
 
@@ -59,10 +59,23 @@ export function FictionAssessmentPopup({ isOpen, onClose }: FictionAssessmentPop
       const data = await response.json();
       console.log('Fiction Assessment API Response:', data);
       
-      // Handle the response properly
-      if (data.success && data.result) {
+      // Handle the new robust API response format
+      if (data.scores) {
+        // New format from robust endpoint
+        setResult({
+          worldCoherence: data.scores.worldCoherence || 0,
+          emotionalPlausibility: data.scores.emotionalPlausibility || 0,
+          thematicDepth: data.scores.thematicDepth || 0,
+          narrativeStructure: data.scores.narrativeStructure || 0,
+          proseControl: data.scores.proseControl || 0,
+          overallFictionScore: data.scores.overallFictionScore || 0,
+          detailedAssessment: data.summary || 'Assessment completed.'
+        });
+      } else if (data.success && data.result) {
+        // Legacy format
         setResult(data.result);
       } else if (data && (data.worldCoherence !== undefined || data.overallFictionScore !== undefined)) {
+        // Direct scores format
         setResult(data);
       } else {
         console.error('Invalid fiction assessment response format:', data);
