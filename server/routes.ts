@@ -1231,18 +1231,22 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  // Fiction Assessment API endpoint - REAL-TIME STREAMING
+  // Fiction Assessment API endpoint - RETURNS JSON RESULTS
   app.post('/api/fiction-assessment', async (req, res) => {
     try {
-      const { text, provider = 'zhi1' } = req.body;
+      const { text, provider = 'openai' } = req.body;
       
       if (!text) {
         return res.status(400).json({ error: "Text is required" });
       }
       
-      // Set headers for real-time streaming
-      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-      res.setHeader('Cache-Control', 'no-cache');
+      console.log(`Starting REAL-TIME fiction assessment streaming with ${provider} for text of length: ${text.length}`);
+      
+      // Call the fiction assessment service directly and return JSON
+      const { assessFiction } = require('./services/fictionAssessment');
+      const result = await assessFiction(text, provider);
+      
+      res.json(result);
       res.setHeader('Connection', 'keep-alive');
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('X-Accel-Buffering', 'no');

@@ -57,10 +57,13 @@ export function FictionAssessmentPopup({ isOpen, onClose }: FictionAssessmentPop
       }
 
       const data = await response.json();
-      if (data.success && data.result) {
-        setResult(data.result);
+      console.log('Fiction Assessment API Response:', data);
+      
+      // Handle the response directly (no wrapper)
+      if (data && (data.worldCoherence !== undefined || data.overallFictionScore !== undefined)) {
+        setResult(data);
       } else {
-        throw new Error('Invalid response format');
+        throw new Error('Invalid response format - no scores found');
       }
     } catch (error) {
       console.error('Fiction assessment error:', error);
