@@ -1231,7 +1231,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  // Fiction Assessment API endpoint - REAL-TIME STREAMING
+  // Fiction Assessment API endpoint
   app.post('/api/fiction-assessment', async (req, res) => {
     try {
       const { text, provider = 'zhi1' } = req.body;
@@ -1240,22 +1240,23 @@ export async function registerRoutes(app: Express): Promise<Express> {
         return res.status(400).json({ error: "Text is required" });
       }
       
-      // Set headers for real-time streaming
-      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-      res.setHeader('Cache-Control', 'no-cache');
-      res.setHeader('Connection', 'keep-alive');
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('X-Accel-Buffering', 'no');
+      console.log(`Starting fiction assessment with ${provider} for text of length: ${text.length}`);
       
-      console.log(`Starting REAL-TIME fiction assessment streaming with ${provider} for text of length: ${text.length}`);
-      
+      const { performFictionAssessment } = await import('./services/fictionAssessment');
       const actualProvider = mapZhiToProvider(provider);
-      await streamFictionAssessment(text, actualProvider, res);
+      const result = await performFictionAssessment(text, actualProvider);
+      
+      res.json({
+        success: true,
+        result
+      });
       
     } catch (error: any) {
-      console.error("Error in fiction assessment streaming:", error);
-      res.write(`ERROR: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      res.end();
+      console.error("Error in fiction assessment:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        success: false 
+      });
     }
   });
 
