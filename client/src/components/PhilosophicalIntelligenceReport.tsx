@@ -336,7 +336,7 @@ const PhilosophicalIntelligenceReport: React.FC<PhilosophicalIntelligenceReportP
               <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border">
                 <h4 className="font-semibold mb-3 text-orange-700 dark:text-orange-300">Detailed Case Assessment</h4>
                 <div className="prose prose-sm max-w-none text-gray-700 dark:text-gray-300">
-                  <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                  <div className="whitespace-pre-line text-sm leading-relaxed">
                     {cleanAIResponse(caseAssessment.detailedAssessment)}
                   </div>
                 </div>

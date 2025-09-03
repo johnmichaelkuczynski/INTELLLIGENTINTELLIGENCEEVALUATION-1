@@ -79,11 +79,12 @@ export function cleanAIResponse(text: string): string {
   // Second pass - use the main cleanup function
   cleaned = stripMarkup(cleaned);
   
-  // Final cleanup - ensure proper sentence spacing and remove extra spaces
+  // Final cleanup - ensure proper sentence spacing but preserve paragraph breaks
   return cleaned
     .replace(/([.!?])\s*([A-Z])/g, '$1 $2')
-    .replace(/\s+/g, ' ')
-    .replace(/^\s+|\s+$/gm, '')
+    .replace(/[ \t]+/g, ' ') // Only replace spaces and tabs, not newlines
+    .replace(/\n{3,}/g, '\n\n') // Limit to max 2 consecutive newlines
+    .replace(/^\s+|\s+$/gm, '') // Trim each line
     .trim();
 }
 

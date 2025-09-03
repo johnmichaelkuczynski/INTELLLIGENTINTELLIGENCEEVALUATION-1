@@ -306,9 +306,26 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
       // Parse the case assessment response to extract scores
       const parseScores = (text: string) => {
         const extractScore = (pattern: string): number => {
-          const regex = new RegExp(`${pattern}[:\\s]*(\\d+)(?:/100)?`, 'i');
-          const match = text.match(regex);
-          return match ? parseInt(match[1]) : 0;
+          // Try multiple patterns to extract scores
+          const patterns = [
+            new RegExp(`${pattern}[:\\s]*(\\d+)(?:/100)?`, 'i'),
+            new RegExp(`${pattern}.*?(\\d+)/100`, 'i'),
+            new RegExp(`${pattern}.*?Score[:\\s]*(\\d+)`, 'i'),
+            new RegExp(`${pattern}.*?(\\d+)`, 'i')
+          ];
+          
+          for (const regex of patterns) {
+            const match = text.match(regex);
+            if (match && match[1]) {
+              const score = parseInt(match[1]);
+              if (score >= 0 && score <= 100) {
+                return score;
+              }
+            }
+          }
+          
+          console.log(`Failed to extract score for ${pattern} from text`);
+          return 0;
         };
 
         return {
