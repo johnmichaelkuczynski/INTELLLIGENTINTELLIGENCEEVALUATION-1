@@ -190,9 +190,8 @@ export function chunkText(text: string, maxWords: number = 500): TextChunk[] {
 export async function evaluateWithGPTZero(text: string): Promise<number> {
   try {
     const result = await checkForAI({ content: text });
-    // Clamp probability to valid range and convert to human percentage
-    const clampedProb = Math.max(0, Math.min(1, result.probability || 0));
-    const humanPercentage = Math.round((1 - clampedProb) * 100);
+    // result.probability is AI percentage (0-100), convert to human percentage  
+    const humanPercentage = 100 - result.probability;
     console.log(`GPTZero raw result:`, result, `-> Human: ${humanPercentage}%`);
     return humanPercentage;
   } catch (error) {
@@ -251,19 +250,27 @@ export async function performHumanization(request: HumanizerRequest): Promise<Hu
 
 // Build humanization prompt
 function buildHumanizationPrompt(aiText: string, styleText: string, customInstructions?: string, stylePresets?: string[]): string {
-  let prompt = `REWRITE BOX A TO EXACTLY MATCH THE STYLE OF BOX B.
+  let prompt = `You will rewrite the content in BOX A to exactly match the writing style of BOX B. 
 
-BOX A:
+BOX A (Content to rewrite):
 """
 ${aiText}
 """
 
-BOX B:
+BOX B (Style template to match):
 """
 ${styleText}
 """
 
-REWRITE BOX A TO EXACTLY MATCH BOX B'S STYLE AT THE MOST GRANULAR LEVEL.`;
+Instructions: Rewrite BOX A content to exactly match BOX B's style at the most granular level:
+- Match sentence structure and rhythm patterns
+- Match vocabulary choices and complexity level  
+- Match grammatical constructions and syntax
+- Match punctuation patterns and paragraph structure
+- Match tone, voice, and rhetorical approach
+- Preserve the meaning of BOX A while making it stylistically identical to BOX B
+
+Important: This is pure style replication. Do not "improve" or "enhance" the content. Simply transform the style to match the template exactly.`;
 
   if (stylePresets && stylePresets.length > 0) {
     prompt += `\n\nSTYLE TECHNIQUES TO APPLY:`;

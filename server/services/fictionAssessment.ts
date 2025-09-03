@@ -17,69 +17,18 @@ export interface FictionAssessmentResult {
   detailedAssessment: string;
 }
 
-const FICTION_ASSESSMENT_PROMPT = `FICTION ASSESSMENT: EVALUATING FICTIONAL WORLD CONSTRUCTION
+const FICTION_ASSESSMENT_PROMPT = `RESPOND WITH ONLY THE 6 LINES BELOW, REPLACE [number] WITH ACTUAL SCORES:
 
-Your task: Assess how well this fiction sample constructs a compelling fictional reality.
+WORLD COHERENCE: [number]/100
+EMOTIONAL PLAUSIBILITY: [number]/100
+THEMATIC DEPTH: [number]/100
+NARRATIVE STRUCTURE: [number]/100
+PROSE CONTROL: [number]/100
+OVERALL FICTION SCORE: [number]/100
 
-FICTION-SPECIFIC EVALUATION CRITERIA (0-100 scale):
+DO NOT ADD ANY OTHER TEXT. NO EXPLANATIONS. NO ANALYSIS. ONLY THE 6 SCORE LINES.
 
-WORLD COHERENCE: How consistent and believable is the fictional world?
-- Score 95-100: Perfect internal consistency, every detail supports the world's logic
-- Score 90-94: Strong world-building with clear rules and consistent details
-- Score 80-89: Good world coherence with minor inconsistencies
-- Score below 80: Noticeable gaps in world logic
-
-EMOTIONAL PLAUSIBILITY: How authentic and believable are the characters' emotions and reactions?
-- Score 95-100: Deeply authentic emotional responses that feel completely genuine
-- Score 90-94: Strong emotional authenticity with convincing character psychology
-- Score 80-89: Generally believable emotions with occasional false notes
-- Score below 80: Unconvincing or inconsistent emotional responses
-
-THEMATIC DEPTH: How meaningful and well-developed are the underlying themes?
-- Score 95-100: Profound thematic exploration with multiple layers of meaning
-- Score 90-94: Strong thematic development with clear significance
-- Score 80-89: Good thematic presence with adequate development
-- Score below 80: Weak or superficial thematic content
-
-NARRATIVE STRUCTURE: How effectively is the story constructed and paced?
-- Score 95-100: Masterful narrative architecture with perfect pacing and structure
-- Score 90-94: Excellent story construction with strong pacing
-- Score 80-89: Solid narrative structure with good flow
-- Score below 80: Structural weaknesses or pacing issues
-
-PROSE CONTROL: How skillful is the writing craft and language use?
-- Score 95-100: Exceptional prose mastery with perfect control of language
-- Score 90-94: Strong prose skills with excellent command of style
-- Score 80-89: Good writing quality with clear voice
-- Score below 80: Adequate prose with room for improvement
-
-RESPONSE FORMAT (NO MARKDOWN):
-
-FICTION ANALYSIS:
-World Summary: [Describe the fictional world and its key elements]
-Character Assessment: [Evaluate the main characters and their development]
-Thematic Elements: [Identify and assess the major themes]
-Narrative Approach: [Analyze the story structure and pacing]
-
-WORLD COHERENCE: [Score]/100
-Assessment: [How consistent and believable is the world-building?]
-
-EMOTIONAL PLAUSIBILITY: [Score]/100
-Assessment: [How authentic are the emotional elements?]
-
-THEMATIC DEPTH: [Score]/100
-Assessment: [How meaningful and well-developed are the themes?]
-
-NARRATIVE STRUCTURE: [Score]/100
-Assessment: [How effective is the story construction?]
-
-PROSE CONTROL: [Score]/100
-Assessment: [How skillful is the writing craft?]
-
-OVERALL FICTION SCORE: [Score]/100
-Summary: [How effectively does this fiction construct a compelling reality?]
-
-Fiction sample to assess:`;
+Text to score:`;
 
 function parseFictionAssessmentResponse(response: string): FictionAssessmentResult {
   // Use the enhanced cleanAIResponse function for aggressive markdown removal
@@ -166,10 +115,10 @@ async function makeOpenAIFictionRequest(prompt: string): Promise<string> {
   const response = await openai.chat.completions.create({
     model: "gpt-4o",
     messages: [
-      { role: "system", content: "You are an expert fiction critic and literary analyst." },
+      { role: "system", content: "You MUST output ONLY numerical scores in the exact format requested. DO NOT write prose, essays, or analysis. Output ONLY: SECTION NAME: [number]/100" },
       { role: "user", content: prompt }
     ],
-    temperature: 0.2
+    temperature: 0.1
   });
   
   return response.choices[0].message.content || "";
