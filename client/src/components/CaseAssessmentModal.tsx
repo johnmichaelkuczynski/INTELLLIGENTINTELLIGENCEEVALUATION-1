@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Download, Mail, X, FileText } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import jsPDF from 'jspdf';
+import { cleanAIResponse } from "@/lib/textUtils";
 
 // Provider name mapping
 const getProviderDisplayName = (provider: string): string => {
@@ -241,7 +242,7 @@ ${result.detailedAssessment}
               <CardContent>
                 <div className="prose max-w-none">
                   <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                    {result.detailedAssessment}
+                    {cleanAIResponse(result.detailedAssessment)}
                   </div>
                 </div>
               </CardContent>

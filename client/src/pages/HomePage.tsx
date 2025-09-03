@@ -898,67 +898,104 @@ Generated on: ${new Date().toLocaleString()}`;
           />
         )}
 
-        {/* Analysis Buttons */}
-        <div className="flex justify-center gap-4">
-          <Button
-            onClick={handleAnalyze}
-            className="px-6 py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 flex items-center"
-            disabled={isAnalysisLoading}
-          >
-            <Brain className="h-5 w-5 mr-2" />
-            <span>
-              {isAnalysisLoading ? "Analyzing..." : (mode === "single" ? "Analyze" : "Analyze Both Documents")}
-            </span>
-          </Button>
-          
+        {/* Analysis Options */}
+        {mode === "single" ? (
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3 text-center">Choose Analysis Type</h3>
+            <p className="text-sm text-gray-600 mb-4 text-center">Run any or all analyses on your document - no need to re-upload text</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Intelligence Analysis */}
+              <div className="text-center">
+                <Button
+                  onClick={handleAnalyze}
+                  className="w-full px-4 py-6 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 flex flex-col items-center min-h-[100px]"
+                  disabled={isAnalysisLoading || !documentA.content.trim()}
+                >
+                  <Brain className="h-6 w-6 mb-2" />
+                  <span className="text-sm">
+                    {isAnalysisLoading ? "Analyzing..." : "Intelligence Analysis"}
+                  </span>
+                </Button>
+                <p className="text-xs text-gray-500 mt-2">Assess cognitive abilities and intelligence</p>
+              </div>
 
-          {/* Case Assessment Button - only for single document mode */}
-          {mode === "single" && (
+              {/* Case Assessment */}
+              <div className="text-center">
+                <Button
+                  onClick={handleCaseAssessment}
+                  className="w-full px-4 py-6 bg-purple-600 text-white rounded-md font-semibold hover:bg-purple-700 flex flex-col items-center min-h-[100px]"
+                  disabled={isCaseAssessmentLoading || !documentA.content.trim()}
+                >
+                  <FileEdit className="h-6 w-6 mb-2" />
+                  <span className="text-sm text-center leading-tight">
+                    {isCaseAssessmentLoading ? "Assessing..." : "Case Assessment"}
+                  </span>
+                </Button>
+                <p className="text-xs text-gray-500 mt-2">How well does it make its case?</p>
+              </div>
+
+              {/* Fiction Assessment */}
+              <div className="text-center">
+                <Button
+                  onClick={() => handleFictionAssessment("A")}
+                  className="w-full px-4 py-6 bg-orange-600 text-white rounded-md font-semibold hover:bg-orange-700 flex flex-col items-center min-h-[100px]"
+                  disabled={!documentA.content.trim() || isFictionAssessmentLoading}
+                >
+                  {isFictionAssessmentLoading ? (
+                    <Loader2 className="h-6 w-6 mb-2 animate-spin" />
+                  ) : (
+                    <FileEdit className="h-6 w-6 mb-2" />
+                  )}
+                  <span className="text-sm">
+                    {isFictionAssessmentLoading ? "Assessing..." : "Fiction Analysis"}
+                  </span>
+                </Button>
+                <p className="text-xs text-gray-500 mt-2">Evaluate creative writing quality</p>
+              </div>
+
+              {/* Maximize Intelligence */}
+              <div className="text-center">
+                <Button
+                  onClick={() => setMaximizeIntelligenceModalOpen(true)}
+                  className="w-full px-4 py-6 bg-emerald-600 text-white rounded-md font-semibold hover:bg-emerald-700 flex flex-col items-center min-h-[100px]"
+                  disabled={!documentA.content.trim()}
+                  data-testid="button-maximize-intelligence"
+                >
+                  <Sparkles className="h-6 w-6 mb-2" />
+                  <span className="text-sm">Maximize Intelligence</span>
+                </Button>
+                <p className="text-xs text-gray-500 mt-2">Rewrite to boost intelligence score</p>
+              </div>
+            </div>
+            
+            {/* Clear All Button */}
+            <div className="mt-6 text-center">
+              <Button
+                onClick={handleReset}
+                variant="outline"
+                className="px-6 py-2 border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 flex items-center mx-auto"
+                disabled={isAnalysisLoading}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                <span>New Analysis / Clear All</span>
+              </Button>
+            </div>
+          </div>
+        ) : (
+          /* Comparison Mode Buttons */
+          <div className="flex justify-center gap-4 flex-wrap">
             <Button
-              onClick={handleCaseAssessment}
-              className="px-6 py-3 bg-purple-600 text-white rounded-md font-semibold hover:bg-purple-700 flex items-center"
-              disabled={isCaseAssessmentLoading}
+              onClick={handleAnalyze}
+              className="px-6 py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 flex items-center"
+              disabled={isAnalysisLoading}
             >
-              <FileEdit className="h-5 w-5 mr-2" />
+              <Brain className="h-5 w-5 mr-2" />
               <span>
-                {isCaseAssessmentLoading ? "Assessing..." : "How Well Does It Make Its Case?"}
+                {isAnalysisLoading ? "Analyzing..." : "Analyze Both Documents"}
               </span>
             </Button>
-          )}
-          
-          {/* Fiction Assessment Button - only for single document mode */}
-          {mode === "single" && (
-            <Button
-              onClick={() => handleFictionAssessment("A")}
-              className="px-6 py-3 bg-orange-600 text-white rounded-md font-semibold hover:bg-orange-700 flex items-center"
-              disabled={!documentA.content.trim() || isFictionAssessmentLoading}
-            >
-              {isFictionAssessmentLoading ? (
-                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-              ) : (
-                <FileEdit className="h-5 w-5 mr-2" />
-              )}
-              <span>
-                {isFictionAssessmentLoading ? "Assessing Fiction..." : "Assess Fiction"}
-              </span>
-            </Button>
-          )}
-
-          {/* Maximize Intelligence Button - only for single document mode */}
-          {mode === "single" && (
-            <Button
-              onClick={() => setMaximizeIntelligenceModalOpen(true)}
-              className="px-6 py-3 bg-emerald-600 text-white rounded-md font-semibold hover:bg-emerald-700 flex items-center"
-              disabled={!documentA.content.trim()}
-              data-testid="button-maximize-intelligence"
-            >
-              <Sparkles className="h-5 w-5 mr-2" />
-              <span>Maximize Intelligence</span>
-            </Button>
-          )}
-          
-          {/* Comparison Button - only for compare mode */}
-          {mode === "compare" && (
+            
             <Button
               onClick={handleDocumentComparison}
               className="px-6 py-3 bg-purple-600 text-white rounded-md font-semibold hover:bg-purple-700 flex items-center"
@@ -969,10 +1006,7 @@ Generated on: ${new Date().toLocaleString()}`;
                 {isComparisonLoading ? "Comparing..." : "Which One Makes Its Case Better?"}
               </span>
             </Button>
-          )}
-          
-          {/* Fiction Comparison Button - only for compare mode */}
-          {mode === "compare" && (
+            
             <Button
               onClick={handleFictionComparison}
               className="px-6 py-3 bg-amber-600 text-white rounded-md font-semibold hover:bg-amber-700 flex items-center"
@@ -980,20 +1014,17 @@ Generated on: ${new Date().toLocaleString()}`;
             >
               <FileEdit className="h-5 w-5 mr-2" />
               <span>Compare Fiction</span>
+            </Button>            
+            <Button
+              onClick={handleReset}
+              className="px-6 py-3 bg-red-600 text-white rounded-md font-semibold hover:bg-red-700 flex items-center"
+              disabled={isAnalysisLoading}
+            >
+              <Trash2 className="h-5 w-5 mr-2" />
+              <span>New Analysis / Clear All</span>
             </Button>
-          )}
-          
-
-          
-          <Button
-            onClick={handleReset}
-            className="px-6 py-3 bg-red-600 text-white rounded-md font-semibold hover:bg-red-700 flex items-center"
-            disabled={isAnalysisLoading}
-          >
-            <Trash2 className="h-5 w-5 mr-2" />
-            <span>New Analysis / Clear All</span>
-          </Button>
-        </div>
+          </div>
+        )}
       </div>
 
       {/* AI Detection Modal */}
