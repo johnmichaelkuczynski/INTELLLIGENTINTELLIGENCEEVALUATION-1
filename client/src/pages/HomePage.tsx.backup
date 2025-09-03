@@ -544,7 +544,6 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
     }
   };
   // Handler for downloading rewrite results
-
   const handleDownloadRewrite = () => {
     if (!rewriteResultData) return;
     
@@ -581,6 +580,7 @@ Generated on: ${new Date().toLocaleString()}`;
     URL.revokeObjectURL(url);
   };
 
+  // Handler for using rewritten text
   const handleUseRewrittenText = () => {
     if (rewriteResultData?.rewrittenText) {
       setDocumentA(prev => ({ ...prev, content: rewriteResultData.rewrittenText }));
@@ -588,8 +588,10 @@ Generated on: ${new Date().toLocaleString()}`;
     }
   };
 
+  // Handler for keeping original text
   const handleKeepOriginalText = () => {
     setRewriteResultsModalOpen(false);
+  };
   };
 
   // Handler for analyzing documents - FIXED MAIN ANALYSIS
