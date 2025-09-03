@@ -140,9 +140,9 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
           const data = await response.json();
           setWritingSamples(data.samples);
           // Set default to "Formal and Functional Relationships"
-          if (data.samples["Formal and Functional Relationships"]) {
-            setBoxB(data.samples["Formal and Functional Relationships"]);
-            setSelectedWritingSample("Formal and Functional Relationships");
+          if (data.samples["Sample 1"]) {
+            setBoxB(data.samples["Sample 1"]);
+            setSelectedWritingSample("Sample 1");
           }
         }
       } catch (error) {
