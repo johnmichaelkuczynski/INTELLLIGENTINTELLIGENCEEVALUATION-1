@@ -1644,40 +1644,42 @@ PROVIDE A FINAL VALIDATED SCORE OUT OF 100 IN THE FORMAT: SCORE: X/100
     }
   });
 
-  // HUMANIZER - GPT Bypass style matching rewrite
-  app.post("/api/humanizer", async (req: Request, res: Response) => {
+  // GPT BYPASS HUMANIZER - Complete Implementation
+  app.post("/api/gpt-bypass-humanizer", async (req: Request, res: Response) => {
     try {
-      const { boxA, boxB, boxC, provider = 'zhi1', customInstructions } = req.body;
+      const { boxA, boxB, provider = 'zhi2', customInstructions, stylePresets, selectedChunkIds, chunks } = req.body;
 
       // Validate required inputs
-      if (!boxA || !boxB || !boxC) {
+      if (!boxA || !boxB) {
         return res.status(400).json({ 
-          error: "Box A (sample text), Box B (target style), and Box C (input text) are all required" 
+          error: "Box A (AI text to humanize) and Box B (human style sample) are both required" 
         });
       }
 
-      if (typeof boxA !== 'string' || typeof boxB !== 'string' || typeof boxC !== 'string') {
+      if (typeof boxA !== 'string' || typeof boxB !== 'string') {
         return res.status(400).json({ 
-          error: "All inputs must be strings" 
+          error: "Both inputs must be strings" 
         });
       }
 
-      console.log(`Starting humanizer with ${provider}...`);
-      console.log(`Box A: ${boxA.length} chars, Box B: ${boxB.length} chars, Box C: ${boxC.length} chars`);
+      console.log(`Starting GPT Bypass Humanizer with ${provider}...`);
+      console.log(`Box A: ${boxA.length} chars, Box B: ${boxB.length} chars`);
       
-      const { performHumanization, processLargeText } = await import('./services/humanizer');
+      const { performHumanization, processChunkedText } = await import('./services/gptBypassHumanizer');
       
       const request = {
         boxA,
         boxB,
-        boxC,
         provider,
-        customInstructions
+        customInstructions,
+        stylePresets,
+        selectedChunkIds,
+        chunks
       };
       
-      // Choose processing method based on text length
-      const result = boxC.length > 3000 ? 
-        await processLargeText(request) : 
+      // Choose processing method based on whether chunks are selected
+      const result = chunks && selectedChunkIds ? 
+        await processChunkedText(request) : 
         await performHumanization(request);
       
       res.json({
@@ -1686,10 +1688,125 @@ PROVIDE A FINAL VALIDATED SCORE OUT OF 100 IN THE FORMAT: SCORE: X/100
       });
       
     } catch (error: any) {
-      console.error("Humanizer error:", error);
+      console.error("GPT Bypass Humanizer error:", error);
       res.status(500).json({ 
         error: true, 
-        message: error.message || "Humanizer failed" 
+        message: error.message || "GPT Bypass Humanizer failed" 
+      });
+    }
+  });
+
+  // Re-rewrite endpoint for recursive humanization
+  app.post("/api/re-rewrite", async (req: Request, res: Response) => {
+    try {
+      const { text, styleText, provider = 'zhi2', customInstructions, stylePresets } = req.body;
+
+      if (!text || !styleText) {
+        return res.status(400).json({ 
+          error: "Text to re-rewrite and style sample are both required" 
+        });
+      }
+
+      console.log(`Starting re-rewrite with ${provider}...`);
+      
+      const { performReRewrite } = await import('./services/gptBypassHumanizer');
+      
+      const result = await performReRewrite(text, styleText, provider, customInstructions, stylePresets);
+      
+      res.json({
+        success: true,
+        result: result
+      });
+      
+    } catch (error: any) {
+      console.error("Re-rewrite error:", error);
+      res.status(500).json({ 
+        error: true, 
+        message: error.message || "Re-rewrite failed" 
+      });
+    }
+  });
+
+  // Get writing samples
+  app.get("/api/writing-samples", async (_req: Request, res: Response) => {
+    try {
+      const { WRITING_SAMPLES } = await import('./services/gptBypassHumanizer');
+      res.json({ samples: WRITING_SAMPLES });
+    } catch (error: any) {
+      console.error("Error getting writing samples:", error);
+      res.status(500).json({ 
+        error: true, 
+        message: "Failed to load writing samples" 
+      });
+    }
+  });
+
+  // Get style presets
+  app.get("/api/style-presets", async (_req: Request, res: Response) => {
+    try {
+      const { STYLE_PRESETS } = await import('./services/gptBypassHumanizer');
+      res.json({ presets: STYLE_PRESETS });
+    } catch (error: any) {
+      console.error("Error getting style presets:", error);
+      res.status(500).json({ 
+        error: true, 
+        message: "Failed to load style presets" 
+      });
+    }
+  });
+
+  // Chunk text endpoint
+  app.post("/api/chunk-text", async (req: Request, res: Response) => {
+    try {
+      const { text, maxWords = 500 } = req.body;
+
+      if (!text || typeof text !== 'string') {
+        return res.status(400).json({ 
+          error: "Text is required and must be a string" 
+        });
+      }
+
+      const { chunkText } = await import('./services/gptBypassHumanizer');
+      const chunks = chunkText(text, maxWords);
+      
+      res.json({
+        success: true,
+        chunks: chunks
+      });
+      
+    } catch (error: any) {
+      console.error("Text chunking error:", error);
+      res.status(500).json({ 
+        error: true, 
+        message: error.message || "Text chunking failed" 
+      });
+    }
+  });
+
+  // Evaluate text with GPTZero
+  app.post("/api/evaluate-ai", async (req: Request, res: Response) => {
+    try {
+      const { text } = req.body;
+
+      if (!text || typeof text !== 'string') {
+        return res.status(400).json({ 
+          error: "Text is required and must be a string" 
+        });
+      }
+
+      const { evaluateWithGPTZero } = await import('./services/gptBypassHumanizer');
+      const score = await evaluateWithGPTZero(text);
+      
+      res.json({
+        success: true,
+        humanPercentage: score
+      });
+      
+    } catch (error: any) {
+      console.error("AI evaluation error:", error);
+      res.status(500).json({ 
+        error: true, 
+        message: error.message || "AI evaluation failed" 
       });
     }
   });
