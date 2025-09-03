@@ -202,13 +202,17 @@ const PhilosophicalIntelligenceReport: React.FC<PhilosophicalIntelligenceReportP
   
   // Case assessment data (HOW WELL DOES IT MAKE ITS CASE)
   const caseAssessment = analysis.caseAssessment || null;
+  const isCaseAssessmentOnly = analysis.analysisType === "case_assessment";
+  const isFictionAssessmentOnly = analysis.analysisType === "fiction_assessment";
+  const isAssessmentOnly = isCaseAssessmentOnly || isFictionAssessmentOnly;
 
   // If no structured content is available, display the raw report in an enhanced format
   const hasStructuredContent = executiveSummary || dimensions.length > 0 || comparativePlacement || finalVerdict;
   
   return (
     <div className="w-full space-y-8">
-      {/* Enhanced Main Intelligence Score Card */}
+      {/* Enhanced Main Intelligence Score Card - HIDE FOR ASSESSMENT ONLY MODES */}
+      {!isAssessmentOnly && (
       <Card className="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950 border-2 border-blue-200 dark:border-blue-700 shadow-xl">
         <CardHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white rounded-t-lg">
           <div className="flex items-center justify-between">
@@ -218,10 +222,10 @@ const PhilosophicalIntelligenceReport: React.FC<PhilosophicalIntelligenceReportP
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-white">
-                  {analysisMode === "quick" ? "Intelligence Assessment" : "Comprehensive Intelligence Assessment"}
+                  {isCaseAssessmentOnly ? "Case Assessment" : (isFictionAssessmentOnly ? "Fiction Assessment" : (analysisMode === "quick" ? "Intelligence Assessment" : "Comprehensive Intelligence Assessment"))}
                 </h2>
                 <p className="text-blue-100 text-sm mt-1">
-                  {analysisMode === "quick" ? "Phase 1 Rapid Evaluation" : "Multi-Phase Forensic Analysis"}
+                  {isCaseAssessmentOnly ? "How Well Does It Make Its Case?" : (isFictionAssessmentOnly ? "Literary Quality Evaluation" : (analysisMode === "quick" ? "Phase 1 Rapid Evaluation" : "Multi-Phase Forensic Analysis"))}
                 </p>
               </div>
             </div>
@@ -284,6 +288,7 @@ const PhilosophicalIntelligenceReport: React.FC<PhilosophicalIntelligenceReportP
           </div>
         </CardContent>
       </Card>
+      )}
 
       {/* Case Assessment Scores - HOW WELL DOES IT MAKE ITS CASE */}
       {caseAssessment && (

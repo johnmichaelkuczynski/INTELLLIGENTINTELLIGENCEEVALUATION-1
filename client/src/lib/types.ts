@@ -73,6 +73,7 @@ export interface DocumentAnalysis {
   // Critical fields needed by the simplified interface
   formattedReport?: string;
   provider?: string;
+  analysisType?: string; // To identify type of analysis (case_assessment, fiction_assessment, etc.)
   report?: string; // For backward compatibility
   
   // Multiple provider results for simultaneous analysis

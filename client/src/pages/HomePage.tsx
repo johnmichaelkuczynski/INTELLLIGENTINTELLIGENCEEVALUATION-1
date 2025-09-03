@@ -325,15 +325,16 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
       const caseAssessmentData = parseScores(fullResponse);
       setCaseAssessmentResult(caseAssessmentData);
       
-      // CREATE NEW ANALYSIS OBJECT WITH CASE ASSESSMENT AS PRIMARY RESULT
+      // CREATE CASE ASSESSMENT ONLY RESULT - NOT INTELLIGENCE ASSESSMENT  
       setAnalysisA({
         id: Date.now(),
-        formattedReport: fullResponse,
-        overallScore: caseAssessmentData.overallCaseScore,
+        formattedReport: "", // Empty so it doesn't show in intelligence section
+        overallScore: undefined, // No intelligence score
         provider: provider,
-        analysis: fullResponse,
-        summary: fullResponse,
-        caseAssessment: caseAssessmentData
+        analysis: "",
+        summary: "",
+        caseAssessment: caseAssessmentData,
+        analysisType: "case_assessment", // Flag to identify this as case assessment
       });
       
       // NO POPUP - Results are now in main report only
@@ -486,15 +487,16 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
       setFictionAssessmentResult(fictionAssessmentData);
       setCurrentFictionDocument(documentId);
       
-      // CREATE NEW ANALYSIS OBJECT WITH FICTION ASSESSMENT AS PRIMARY RESULT  
+      // CREATE FICTION ASSESSMENT ONLY RESULT - NOT INTELLIGENCE ASSESSMENT  
       setAnalysisA({
         id: Date.now(),
-        formattedReport: fullResponse,
-        overallScore: fictionAssessmentData.overallFictionScore,
+        formattedReport: "", // Empty so it doesn't show in intelligence section
+        overallScore: undefined, // No intelligence score
         provider: provider,
-        analysis: fullResponse,
-        summary: fullResponse,
-        fictionAssessment: fictionAssessmentData
+        analysis: "",
+        summary: "",
+        fictionAssessment: fictionAssessmentData,
+        analysisType: "fiction_assessment", // Flag to identify this as fiction assessment
       });
       
       // NO POPUP - Results are now in main report only
