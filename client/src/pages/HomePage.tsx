@@ -2013,30 +2013,31 @@ Generated on: ${new Date().toLocaleString()}`;
             </div>
           </div>
 
-          {/* Box C - Humanized Output */}
-          {boxC && (
-            <div className="mt-8 space-y-3">
-              <label className="block text-sm font-semibold text-red-800 dark:text-red-200">
-                Box C - Humanized Output
-                {boxCScore !== null && (
-                  <span className={`ml-2 px-2 py-1 text-xs rounded ${
-                    boxCScore >= 70 ? 'bg-green-100 text-green-800' : 
-                    boxCScore >= 50 ? 'bg-yellow-100 text-yellow-800' : 
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    {boxCScore}% HUMAN
-                  </span>
-                )}
-              </label>
-              <Textarea
-                value={boxC}
-                onChange={(e) => setBoxC(e.target.value)}
-                className="min-h-[400px] border-green-200 dark:border-green-700 focus:border-green-500 dark:focus:border-green-400 bg-green-50 dark:bg-green-900/10"
-                data-testid="textarea-box-c"
-                readOnly
-              />
-              
-              {/* Re-rewrite and Download Options */}
+          {/* Box C - Humanized Output - Always Visible */}
+          <div className="mt-8 space-y-3">
+            <label className="block text-sm font-semibold text-red-800 dark:text-red-200">
+              Box C - Humanized Output
+              {boxCScore !== null && (
+                <span className={`ml-2 px-2 py-1 text-xs rounded ${
+                  boxCScore >= 70 ? 'bg-green-100 text-green-800' : 
+                  boxCScore >= 50 ? 'bg-yellow-100 text-yellow-800' : 
+                  'bg-red-100 text-red-800'
+                }`}>
+                  {boxCScore}% HUMAN
+                </span>
+              )}
+            </label>
+            <Textarea
+              value={boxC}
+              onChange={(e) => setBoxC(e.target.value)}
+              placeholder="Humanized text will appear here after processing..."
+              className="min-h-[400px] border-green-200 dark:border-green-700 focus:border-green-500 dark:focus:border-green-400 bg-green-50 dark:bg-green-900/10"
+              data-testid="textarea-box-c"
+              readOnly
+            />
+            
+            {/* Re-rewrite and Download Options - Show when there's content */}
+            {boxC && (
               <div className="flex flex-wrap gap-2 justify-between items-center">
                 <div className="flex gap-2">
                   <Button
@@ -2090,8 +2091,8 @@ Generated on: ${new Date().toLocaleString()}`;
                   </Button>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Instructions */}
           <div className="mt-8 p-4 bg-red-100 dark:bg-red-900/30 rounded-lg">
