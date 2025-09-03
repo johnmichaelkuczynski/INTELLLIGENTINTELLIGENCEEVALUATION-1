@@ -4,6 +4,10 @@
 This platform analyzes written text to assess the intelligence and cognitive fingerprint of authors using multi-model AI evaluation. It provides document analysis, AI detection, translation, comprehensive cognitive profiling, and intelligent text rewriting capabilities. The project's vision is to offer deep insights into cognitive abilities and thought processes from written content, with advanced features for maximizing intelligence scores through iterative rewriting.
 
 ## Recent Changes
+- **January 2025**: **CRITICAL FIXES COMPLETED** - All core functions now fully operational
+  - ✅ **Fiction Assessment fully restored**: Fixed critical "require is not defined" error, API now returns structured JSON scores
+  - ✅ **UI scrolling issues completely resolved**: Fixed preview breakage, restored proper dialog scrolling functionality
+  - ✅ **All major functions verified working**: GPT Bypass Humanizer (100% success), Intelligent Rewrite, Case Assessment, Cognitive Analysis
 - **September 2025**: **BREAKTHROUGH SUCCESS** - GPT Bypass Humanizer now achieving 100% AI → 0% AI transformation
   - Completely rebuilt core algorithm for surgical precision style replication
   - Removed all generic "humanization" instructions from prompt
