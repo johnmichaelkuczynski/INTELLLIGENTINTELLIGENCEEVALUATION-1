@@ -37,11 +37,13 @@ export class GPTZeroService {
       // Parse GPTZero response based on actual API format
       const document = data.documents[0];
       const aiProbability = document.class_probabilities?.ai || 0;
-      const aiScore = Math.round(aiProbability * 100);
+      // Clamp probability to valid range [0, 1] and convert to human percentage
+      const clampedProb = Math.max(0, Math.min(1, aiProbability));
+      const humanScore = Math.round((1 - clampedProb) * 100); // Convert AI prob to human percentage
       const isHighConfidence = document.confidence_category === 'high';
       
       return {
-        aiScore,
+        aiScore: humanScore, // This is now the human percentage (0-100)
         isAI: document.document_classification === 'AI_ONLY' || document.document_classification === 'MIXED',
         confidence: isHighConfidence ? 0.9 : document.confidence_category === 'medium' ? 0.7 : 0.5,
       };

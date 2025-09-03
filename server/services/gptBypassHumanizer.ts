@@ -190,11 +190,14 @@ export function chunkText(text: string, maxWords: number = 500): TextChunk[] {
 export async function evaluateWithGPTZero(text: string): Promise<number> {
   try {
     const result = await checkForAI({ content: text });
-    // GPTZero returns probability as decimal, convert to percentage
-    return Math.round((1 - result.probability) * 100); // Convert AI probability to human percentage
+    // Clamp probability to valid range and convert to human percentage
+    const clampedProb = Math.max(0, Math.min(1, result.probability || 0));
+    const humanPercentage = Math.round((1 - clampedProb) * 100);
+    console.log(`GPTZero raw result:`, result, `-> Human: ${humanPercentage}%`);
+    return humanPercentage;
   } catch (error) {
     console.error('GPTZero evaluation failed:', error);
-    return 0; // Default to 0% if evaluation fails
+    return 50; // Default to 50% if evaluation fails
   }
 }
 

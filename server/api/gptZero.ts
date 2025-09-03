@@ -32,10 +32,14 @@ export async function checkForAI(document: DocumentInput): Promise<AIDetectionRe
 
     const data = await response.json();
     
-    // Extract probability from GPTZero response
-    // Note: Actual response format may vary based on GPTZero API documentation
-    const probability = Math.round(data.documents[0].completely_generated_prob * 100);
+    // Extract probability from GPTZero response and ensure valid range
+    const rawProb = data.documents[0]?.completely_generated_prob || 0;
+    // Clamp probability to valid range [0, 1] and convert to percentage
+    const clampedProb = Math.max(0, Math.min(1, rawProb));
+    const probability = Math.round(clampedProb * 100);
     const isAI = probability >= 50;
+    
+    console.log(`GPTZero API raw response:`, rawProb, `-> clamped:`, clampedProb, `-> percentage:`, probability);
 
     return {
       isAI,
