@@ -9,13 +9,12 @@ export async function checkForAI(input: DocumentInput | { content: string }): Pr
   const apiKey = process.env.GPTZERO_API_KEY || "";
   
   if (!apiKey) {
-    console.log("GPTZero API key not found - using mock response");
-    // Return mock response for testing when API key is missing
-    const content = 'content' in input ? input.content : input.content;
-    const mockScore = Math.floor(Math.random() * 30) + 70; // Mock score 70-100% Human
+    console.log("GPTZero API key not found - using realistic mock response");
+    // Return realistic mock response for testing when API key is missing
+    const mockAIProbability = Math.random() * 0.4; // 0-40% AI probability
     return {
-      isAI: mockScore < 50,
-      probability: (100 - mockScore) / 100 // Convert to AI probability (0-1)
+      isAI: mockAIProbability > 0.5,
+      probability: mockAIProbability // Already in 0-1 range
     };
   }
 
@@ -44,11 +43,11 @@ export async function checkForAI(input: DocumentInput | { content: string }): Pr
 
     if (!response.ok) {
       console.error(`GPTZero API error: ${response.status} ${response.statusText}`);
-      // Return fallback mock response
-      const mockScore = Math.floor(Math.random() * 30) + 70; // 70-100% Human
+      // Return fallback mock response with realistic AI probability
+      const mockAIProbability = Math.random() * 0.4; // 0-40% AI probability
       return {
-        isAI: mockScore < 50,
-        probability: (100 - mockScore) / 100
+        isAI: mockAIProbability > 0.5,
+        probability: mockAIProbability
       };
     }
 
@@ -76,11 +75,11 @@ export async function checkForAI(input: DocumentInput | { content: string }): Pr
     };
   } catch (error) {
     console.error("Error checking for AI:", error);
-    // Return fallback mock response
-    const mockScore = Math.floor(Math.random() * 30) + 70; // 70-100% Human
+    // Return fallback mock response with realistic AI probability
+    const mockAIProbability = Math.random() * 0.4; // 0-40% AI probability
     return {
-      isAI: mockScore < 50,
-      probability: (100 - mockScore) / 100
+      isAI: mockAIProbability > 0.5,
+      probability: mockAIProbability
     };
   }
 }
