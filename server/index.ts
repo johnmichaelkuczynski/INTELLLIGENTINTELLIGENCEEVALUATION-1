@@ -3,6 +3,7 @@ import { createServer } from "http";
 
 import { setupVite, serveStatic, log } from "./vite";
 import { registerRoutes } from "./routes";
+import { validateEnvironmentOrExit } from "./utils/envValidation";
 
 const app = express();
 app.use(express.json({ limit: '50mb' }));
@@ -58,6 +59,9 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Validate environment variables at startup
+  validateEnvironmentOrExit();
+  
   await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
