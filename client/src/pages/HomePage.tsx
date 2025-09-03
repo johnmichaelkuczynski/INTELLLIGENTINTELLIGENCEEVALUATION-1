@@ -472,14 +472,38 @@ const HomePage: React.FC = () => {
   };
 
   // Handler for analyzing documents - FIXED MAIN ANALYSIS
+  // Helper function to get content for analysis based on chunk selection
+  const getContentForAnalysis = (document: DocumentInputType): string => {
+    // If no chunks or no chunks selected, use full content
+    if (!document.chunks || !document.selectedChunkIds || document.selectedChunkIds.length === 0) {
+      return document.content;
+    }
+    
+    // Combine selected chunks
+    const selectedChunks = document.chunks.filter(chunk => 
+      document.selectedChunkIds!.includes(chunk.id)
+    );
+    
+    return selectedChunks.map(chunk => chunk.content).join('\n\n');
+  };
+
   const handleAnalyze = async () => {
-    if (!documentA.content.trim()) {
-      alert("Please enter some text in Document A.");
+    const contentA = getContentForAnalysis(documentA);
+    const contentB = getContentForAnalysis(documentB);
+    
+    if (!contentA.trim()) {
+      const message = documentA.chunks && documentA.chunks.length > 1 
+        ? "Please select at least one chunk to analyze from Document A."
+        : "Please enter some text in Document A.";
+      alert(message);
       return;
     }
 
-    if (mode === "compare" && !documentB.content.trim()) {
-      alert("Please enter some text in Document B for comparison.");
+    if (mode === "compare" && !contentB.trim()) {
+      const message = documentB.chunks && documentB.chunks.length > 1 
+        ? "Please select at least one chunk to analyze from Document B."
+        : "Please enter some text in Document B for comparison.";
+      alert(message);
       return;
     }
     
@@ -508,7 +532,7 @@ const HomePage: React.FC = () => {
           const response = await fetch('/api/cognitive-quick', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: documentA.content, provider: provider }),
+            body: JSON.stringify({ text: contentA, provider: provider }),
           });
 
           if (!response.ok) {
@@ -525,7 +549,7 @@ const HomePage: React.FC = () => {
           const response = await fetch('/api/stream-comprehensive', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: documentA.content, provider: provider }),
+            body: JSON.stringify({ text: contentA, provider: provider }),
           });
 
           if (!response.ok) {
@@ -586,8 +610,8 @@ const HomePage: React.FC = () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            documentA: documentA.content,
-            documentB: documentB.content,
+            documentA: contentA,
+            documentB: contentB,
             provider: provider
           }),
         });
@@ -603,7 +627,10 @@ const HomePage: React.FC = () => {
       } else {
         // Use the comprehensive comparison (existing logic)
         console.log(`Comparing with ${selectedProvider}...`);
-        const results = await compareDocuments(documentA, documentB, selectedProvider);
+        // Create temporary documents with the selected content for comparison
+        const tempDocA = { ...documentA, content: contentA };
+        const tempDocB = { ...documentB, content: contentB };
+        const results = await compareDocuments(tempDocA, tempDocB, selectedProvider);
         setAnalysisA(results.analysisA);
         setAnalysisB(results.analysisB);
         setComparison(results.comparison);

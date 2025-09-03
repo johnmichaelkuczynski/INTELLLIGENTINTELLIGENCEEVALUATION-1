@@ -2,7 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { FileInput } from "@/components/ui/file-input";
-import { X, Upload, Bot, FileText, Mic, Trash2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { X, Upload, Bot, FileText, Mic, Trash2, CheckSquare, Square } from "lucide-react";
 import { extractTextFromFile } from "@/lib/analysis";
 import { DocumentInput as DocumentInputType } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
@@ -94,6 +96,41 @@ const DocumentInput: React.FC<DocumentInputProps> = ({
     setDocument({
       ...document,
       content: text
+    });
+  };
+
+  // Handle chunk selection
+  const handleChunkToggle = (chunkId: string, selected: boolean) => {
+    const selectedChunkIds = document.selectedChunkIds || [];
+    
+    if (selected) {
+      // Add chunk to selection
+      setDocument({
+        ...document,
+        selectedChunkIds: [...selectedChunkIds, chunkId]
+      });
+    } else {
+      // Remove chunk from selection
+      setDocument({
+        ...document,
+        selectedChunkIds: selectedChunkIds.filter(id => id !== chunkId)
+      });
+    }
+  };
+
+  const handleSelectAllChunks = () => {
+    if (!document.chunks) return;
+    
+    setDocument({
+      ...document,
+      selectedChunkIds: document.chunks.map(chunk => chunk.id)
+    });
+  };
+
+  const handleDeselectAllChunks = () => {
+    setDocument({
+      ...document,
+      selectedChunkIds: []
     });
   };
 
@@ -190,8 +227,85 @@ const DocumentInput: React.FC<DocumentInputProps> = ({
               onChange={handleTextChange}
             />
           )}
-          
 
+          {/* Chunk Selection Interface */}
+          {document.chunks && document.chunks.length > 1 && (
+            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-sm font-semibold text-blue-800">
+                  Large Document Detected ({document.originalWordCount} words)
+                </h3>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSelectAllChunks}
+                    className="text-xs px-2 py-1"
+                    data-testid="button-select-all-chunks"
+                  >
+                    <CheckSquare className="h-3 w-3 mr-1" />
+                    Select All
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleDeselectAllChunks}
+                    className="text-xs px-2 py-1"
+                    data-testid="button-deselect-all-chunks"
+                  >
+                    <Square className="h-3 w-3 mr-1" />
+                    Deselect All
+                  </Button>
+                </div>
+              </div>
+              
+              <p className="text-xs text-blue-700 mb-3">
+                Select which sections to analyze (each chunk is ~1000 words):
+              </p>
+              
+              <div className="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto">
+                {document.chunks.map((chunk, index) => {
+                  const isSelected = document.selectedChunkIds?.includes(chunk.id) || false;
+                  
+                  return (
+                    <Card key={chunk.id} className={`p-3 cursor-pointer transition-colors ${
+                      isSelected ? 'bg-blue-100 border-blue-300' : 'bg-white border-gray-200 hover:bg-gray-50'
+                    }`}>
+                      <div 
+                        className="flex items-start gap-3"
+                        onClick={() => handleChunkToggle(chunk.id, !isSelected)}
+                        data-testid={`chunk-selector-${chunk.id}`}
+                      >
+                        <Checkbox
+                          checked={isSelected}
+                          onChange={(e) => handleChunkToggle(chunk.id, (e.target as HTMLInputElement).checked)}
+                          className="mt-0.5"
+                          data-testid={`checkbox-${chunk.id}`}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-center mb-1">
+                            <h4 className="text-xs font-semibold text-gray-700">
+                              Chunk {index + 1}
+                            </h4>
+                            <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                              {chunk.wordCount} words
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-gray-600 line-clamp-2">
+                            {chunk.preview}
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
+              
+              <div className="mt-3 text-xs text-blue-700">
+                {document.selectedChunkIds?.length || 0} of {document.chunks.length} chunks selected
+              </div>
+            </div>
+          )}
           
           {/* Word and character count */}
           <div className="flex justify-between items-center mt-2 text-xs text-gray-500">

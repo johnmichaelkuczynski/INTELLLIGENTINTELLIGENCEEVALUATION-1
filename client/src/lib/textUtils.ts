@@ -70,3 +70,69 @@ export function formatForDisplay(text: string): string {
     .filter(paragraph => paragraph.length > 0)
     .join('\n\n');
 }
+
+/**
+ * Split text into chunks of approximately targetWords words each
+ * Attempts to break at sentence boundaries when possible
+ */
+import { TextChunk } from './types';
+
+export function chunkText(text: string, targetWords: number = 1000): TextChunk[] {
+  if (!text || text.trim().length === 0) {
+    return [];
+  }
+
+  const words = text.trim().split(/\s+/);
+  
+  // If text is shorter than target, return as single chunk
+  if (words.length <= targetWords) {
+    return [{
+      id: 'chunk-1',
+      content: text.trim(),
+      wordCount: words.length,
+      startIndex: 0,
+      endIndex: text.length,
+      preview: text.trim().substring(0, 100) + (text.length > 100 ? '...' : '')
+    }];
+  }
+
+  const chunks: TextChunk[] = [];
+  let currentIndex = 0;
+  let chunkNumber = 1;
+
+  while (currentIndex < words.length) {
+    // Determine the end index for this chunk
+    let endIndex = Math.min(currentIndex + targetWords, words.length);
+    
+    // Try to end at a sentence boundary if we're not at the very end
+    if (endIndex < words.length) {
+      // Look backwards from the target end to find a sentence ending
+      for (let i = endIndex - 1; i >= currentIndex + Math.floor(targetWords * 0.8); i--) {
+        const word = words[i];
+        if (word.endsWith('.') || word.endsWith('!') || word.endsWith('?')) {
+          endIndex = i + 1;
+          break;
+        }
+      }
+    }
+
+    // Extract the chunk text
+    const chunkWords = words.slice(currentIndex, endIndex);
+    const chunkText = chunkWords.join(' ');
+    
+    // Create the chunk object
+    chunks.push({
+      id: `chunk-${chunkNumber}`,
+      content: chunkText,
+      wordCount: chunkWords.length,
+      startIndex: currentIndex,
+      endIndex: endIndex,
+      preview: chunkText.substring(0, 100) + (chunkText.length > 100 ? '...' : '')
+    });
+
+    currentIndex = endIndex;
+    chunkNumber++;
+  }
+
+  return chunks;
+}

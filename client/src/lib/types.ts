@@ -1,3 +1,12 @@
+export interface TextChunk {
+  id: string;
+  content: string;
+  wordCount: number;
+  startIndex: number;
+  endIndex: number;
+  preview: string;
+}
+
 export interface DocumentInput {
   content: string;
   filename?: string;
@@ -8,6 +17,9 @@ export interface DocumentInput {
     version?: string;
     [key: string]: any;
   };
+  chunks?: TextChunk[];
+  selectedChunkIds?: string[];
+  originalWordCount?: number;
 }
 
 export type AnalysisMode = 'single' | 'compare';
