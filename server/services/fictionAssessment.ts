@@ -83,7 +83,16 @@ Fiction sample to assess:`;
 
 function parseFictionAssessmentResponse(response: string): FictionAssessmentResult {
   // Use the enhanced cleanAIResponse function for aggressive markdown removal
-  const cleanResponse = cleanAIResponse(response);
+  const cleanResponse = response
+    .replace(/\*\*/g, '')
+    .replace(/\*/g, '')
+    .replace(/#{1,6}\s/g, '')
+    .replace(/`{1,3}/g, '')
+    .replace(/~~([^~]+)~~/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/>\s+/gm, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 
   const extractScore = (section: string): number => {
     const patterns = [

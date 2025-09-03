@@ -1701,7 +1701,9 @@ Generated on: ${new Date().toLocaleString()}`;
                   }
                 }}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Choose writing sample..." />
+                    <SelectValue placeholder="Choose writing sample...">
+                      {selectedWritingSample ? selectedWritingSample.split('|')[1] : "Choose writing sample..."}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent className="max-h-80">
                     {Object.entries(writingSamples).map(([category, samples]) => (
