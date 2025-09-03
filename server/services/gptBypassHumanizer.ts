@@ -251,6 +251,12 @@ export async function performHumanization(request: HumanizerRequest): Promise<Hu
 
 // Build humanization prompt
 function buildHumanizationPrompt(aiText: string, styleText: string, customInstructions?: string, stylePresets?: string[]): string {
+  // Build style instructions from selected presets
+  let styleInstructions = '';
+  if (stylePresets && stylePresets.length > 0) {
+    styleInstructions = `\n\nAPPLY THESE SPECIFIC STYLE TRANSFORMATIONS:\n${stylePresets.map(preset => `• ${preset}`).join('\n')}\n`;
+  }
+  
   let prompt = `You are an expert text humanizer. Your task is to rewrite AI-generated text to make it undetectable by AI detection tools while preserving all original meaning and information.
 
 ORIGINAL AI-WRITTEN TEXT TO HUMANIZE:

@@ -138,12 +138,11 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
         const response = await fetch('/api/writing-samples');
         if (response.ok) {
           const data = await response.json();
-          console.log("LOADED WRITING SAMPLES:", Object.keys(data.samples));
           setWritingSamples(data.samples);
-          // Set default to "Sample 1"
-          if (data.samples["Sample 1"]) {
-            setBoxB(data.samples["Sample 1"]);
-            setSelectedWritingSample("Sample 1");
+          // Set default to "Formal and Functional Relationships" (CONTENT-NEUTRAL default)
+          if (data.samples["CONTENT-NEUTRAL"] && data.samples["CONTENT-NEUTRAL"]["Formal and Functional Relationships"]) {
+            setBoxB(data.samples["CONTENT-NEUTRAL"]["Formal and Functional Relationships"]);
+            setSelectedWritingSample("Formal and Functional Relationships");
           }
         }
       } catch (error) {
@@ -268,9 +267,9 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
         body: JSON.stringify({
           boxA,
           boxB,
+          stylePresets: selectedStylePresets,
           provider: humanizerProvider,
           customInstructions: humanizerCustomInstructions,
-          stylePresets: selectedStylePresets,
           selectedChunkIds: selectedChunkIds.length > 0 ? selectedChunkIds : undefined,
           chunks: chunks.length > 0 ? chunks : undefined
         }),
@@ -327,9 +326,9 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
         body: JSON.stringify({
           boxA: boxC, // Use current output as new input
           boxB,
-          provider: humanizerProvider,
-          customInstructions: humanizerCustomInstructions + " [RECURSIVE REWRITE] Further improve human-like qualities and reduce AI detection.",
           stylePresets: selectedStylePresets,
+          provider: humanizerProvider,
+          customInstructions: humanizerCustomInstructions + " [RECURSIVE REWRITE] Further improve human-like qualities and reduce AI detection."
         }),
       });
 
@@ -2183,11 +2182,18 @@ Generated on: ${new Date().toLocaleString()}`;
               value={selectedWritingSample}
               onValueChange={(value) => {
                 setSelectedWritingSample(value);
-                if (writingSamples[value]) {
-                  setBoxB(writingSamples[value]);
+                // Find the sample text in the categorized structure
+                let sampleText = '';
+                Object.values(writingSamples).forEach((category: any) => {
+                  if (typeof category === 'object' && category[value]) {
+                    sampleText = category[value];
+                  }
+                });
+                if (sampleText) {
+                  setBoxB(sampleText);
                   // Auto-evaluate
                   setTimeout(() => {
-                    evaluateTextAI(writingSamples[value], setBoxBScore);
+                    evaluateTextAI(sampleText, setBoxBScore);
                   }, 500);
                 }
               }}
@@ -2197,17 +2203,80 @@ Generated on: ${new Date().toLocaleString()}`;
                 <SelectValue placeholder="Select writing sample..." />
               </SelectTrigger>
               <SelectContent>
-                {Object.keys(writingSamples).sort((a, b) => {
-                  const numA = parseInt(a.replace('Sample ', ''));
-                  const numB = parseInt(b.replace('Sample ', ''));
-                  return numA - numB;
-                }).map((sampleName) => (
-                  <SelectItem key={sampleName} value={sampleName}>
-                    {sampleName}
+                {Object.keys(writingSamples).length > 0 ? (
+                  Object.entries(writingSamples).map(([categoryName, samples]: [string, any]) => (
+                    <div key={categoryName}>
+                      <div className="px-2 py-1 text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                        {categoryName.replace(/_/g, ' ')}
+                      </div>
+                      {typeof samples === 'object' && Object.keys(samples).map((sampleName) => (
+                        <SelectItem key={sampleName} value={sampleName} className="pl-4">
+                          {sampleName}
+                        </SelectItem>
+                      ))}
+                    </div>
+                  ))
+                ) : (
+                  <SelectItem value="loading" disabled>
+                    Loading samples...
                   </SelectItem>
-                ))}
+                )}
               </SelectContent>
             </Select>
+
+            {/* LLM Selection Dropdown */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                AI Model (Default: Anthropic)
+              </label>
+              <Select value={humanizerProvider} onValueChange={setHumanizerProvider}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="zhi2">Anthropic (Claude)</SelectItem>
+                  <SelectItem value="zhi1">OpenAI (GPT)</SelectItem>
+                  <SelectItem value="zhi3">DeepSeek</SelectItem>
+                  <SelectItem value="perplexity">Perplexity</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Style Presets Checkboxes */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Style Instructions (Check any combination)
+              </label>
+              <div className="max-h-60 overflow-y-auto border rounded-lg p-3 bg-gray-50 dark:bg-gray-700">
+                {Object.entries(stylePresets).map(([categoryName, presets]: [string, any]) => (
+                  <div key={categoryName} className="mb-4">
+                    <div className={`text-sm font-bold mb-2 ${categoryName === 'CRITICAL_FOR_HUMANIZATION' ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'} uppercase`}>
+                      {categoryName === 'CRITICAL_FOR_HUMANIZATION' ? '⭐ CRITICAL FOR HUMANIZATION (1-8)' : categoryName.replace(/_/g, ' ')}
+                    </div>
+                    {typeof presets === 'object' && Object.entries(presets).map(([presetName, description]: [string, any]) => (
+                      <div key={presetName} className="flex items-start space-x-2 mb-2">
+                        <input
+                          type="checkbox"
+                          id={presetName}
+                          checked={selectedStylePresets.includes(presetName)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedStylePresets([...selectedStylePresets, presetName]);
+                            } else {
+                              setSelectedStylePresets(selectedStylePresets.filter(p => p !== presetName));
+                            }
+                          }}
+                          className="mt-1"
+                        />
+                        <label htmlFor={presetName} className="text-xs text-gray-600 dark:text-gray-400">
+                          <span className="font-semibold">{presetName}:</span> {description}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
             
             <Textarea
               placeholder="Enter human writing style sample to mimic..."

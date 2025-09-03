@@ -2171,40 +2171,70 @@ PROVIDE A FINAL VALIDATED SCORE OUT OF 100 IN THE FORMAT: SCORE: X/100
     }
   });
 
-  // Writing samples endpoint
+  // Writing samples endpoint - CATEGORIZED
   app.get("/api/writing-samples", async (req, res) => {
     try {
       const samples = {
-        "Sample 1": `Presumably, logically equivalent statements are confirmationally equivalent. In other words, if two statements entail each other, then anything that one confirms the one statement to a given degree also confirms the other statement to that degree. But this actually seems false when consider statement-pairs such as: (i) All ravens are black, and (ii) All non-black things are non-ravens, which, though logically equivalent, seem to confirmationally equivalent, in that a non-black non-raven confirms (ii) to a high degree but confirms (i) to no degree or at most to a low degree.`,
-        "Sample 2": `The relationship between theoretical frameworks and empirical data requires careful consideration. When examining complex phenomena, researchers must balance methodological rigor with interpretive flexibility. This approach allows for comprehensive analysis while maintaining scholarly objectivity.`,
-        "Sample 3": `The system's architecture incorporates multiple layers of abstraction, each serving specific functional requirements. Data flow management operates through standardized interfaces, ensuring compatibility across different implementation environments while maintaining performance characteristics.`,
-        "Sample 4": `You know, I've been thinking about this whole situation lately. It's pretty interesting how things work out sometimes. When you really look at it from different angles, there are always multiple ways to approach any problem. Some people prefer one method, others go completely different routes.`,
-        "Sample 5": `Looking back on everything that's happened, I realize there were patterns I didn't see at the time. It's funny how clarity comes with distance. What seemed so important then feels different now, more manageable somehow.`,
-        "Sample 6": `The morning light filtered through ancient windows, casting long shadows across the weathered stone floor. Each beam carried with it the weight of centuries, illuminating dust motes that danced like memories in the still air. Time seemed suspended in this place.`,
-        "Sample 7": `Words fall like autumn leaves, each one carrying the essence of seasons past. They gather in corners of consciousness, waiting for the right moment to bloom again into meaning. Language breathes with its own rhythm, patient and eternal.`,
-        "Sample 8": `The study employed a mixed-methods approach, combining quantitative analysis with qualitative interviews. Data collection occurred over eighteen months, with participants recruited through stratified random sampling. Statistical significance was determined using chi-square tests, with alpha levels set at 0.05.`,
-        "Sample 9": `Following our quarterly review meeting, several strategic initiatives require immediate attention. The market analysis indicates significant opportunities in the emerging sectors, while competitor positioning suggests we need to accelerate our product development timeline to maintain market share.`,
-        "Sample 10": `The proposed restructuring will optimize operational efficiency while reducing overhead costs by approximately 15%. Implementation should begin in Q3, with full deployment expected by year-end. Key stakeholders have been briefed and expressed support for the initiative.`,
-        "Sample 11": `The defendant's motion lacks merit for several reasons. First, the precedent cited is distinguishable on material facts. Second, the interpretation of the relevant statute ignores legislative intent as expressed in the committee reports. Finally, the constitutional argument fails under established Supreme Court doctrine.`,
-        "Sample 12": `The experiment yielded statistically significant results (p < 0.001) supporting the primary hypothesis. Control groups maintained baseline measurements throughout the observation period, while experimental conditions produced measurable effects within 72 hours. These findings replicate earlier work by Thompson and colleagues.`,
-        "Sample 13": `The city council voted 7-2 last night to approve the controversial development project, despite strong opposition from neighborhood groups. Construction is expected to begin next spring, with completion scheduled for late 2025. Mayor Johnson called the decision "a step forward for economic growth."`,
-        "Sample 14": `Sarah Martinez remembers the exact moment everything changed. It was 3:47 p.m. on a Tuesday when her phone rang. The voice on the other end would alter the course of her family's life forever, setting in motion events that continue to unfold today.`,
-        "Sample 15": `The device operates within specified parameters under standard conditions. Temperature range extends from -20°C to +85°C, with humidity tolerance up to 95% non-condensing. Power consumption averages 2.3 watts during active operation, dropping to 0.1 watts in standby mode.`,
-        "Sample 16": `The patient presented with acute onset of symptoms consistent with the suspected diagnosis. Initial laboratory values revealed elevated markers, prompting immediate intervention. Response to treatment was monitored using standardized protocols, with marked improvement noted within the first week.`,
-        "Sample 17": `Previous studies have demonstrated conflicting results regarding this phenomenon. While Johnson et al. (2019) found significant correlations, Martinez's longitudinal study (2021) challenged these findings. The discrepancy may stem from methodological differences in sampling procedures and measurement instruments.`,
-        "Sample 18": `Consider the proposition that knowledge requires justified true belief. This classical definition faces serious challenges, particularly from Gettier cases. If we accept that luck can undermine knowledge even when belief is both true and justified, we must reconsider what constitutes adequate justification.`,
-        "Sample 19": `The recent policy changes represent a fundamental misunderstanding of the issues at stake. Rather than addressing root causes, these measures merely treat symptoms. A more comprehensive approach would consider long-term implications and stakeholder perspectives.`,
-        "Sample 20": `Our assessment reveals three critical gaps in the current operational framework. The most pressing concern involves process standardization across regional offices. We recommend implementing a phased approach, beginning with pilot programs in two high-performing locations.`,
-        "Sample 21": `Documents obtained through public records requests reveal a pattern of questionable decisions spanning three years. Internal emails show officials were aware of potential problems as early as 2021, yet no corrective action was taken until media attention forced their hand.`,
-        "Sample 22": `She watched the rain trace patterns on the café window, each droplet following invisible paths that somehow mirrored her own uncertain journey. The coffee had grown cold an hour ago, but leaving meant making decisions she wasn't ready to face.`,
-        "Sample 23": `Henry possessed the peculiar ability to make everyone feel simultaneously important and invisible. His attention was a spotlight that burned bright and brief, leaving people yearning for its return long after he'd moved on to other subjects, other victims of his curious charm.`,
-        "Sample 24": `Walking down this street again after all these years and nothing's changed really has it the same crack in the sidewalk where I used to trip as a kid the same faded blue house with the broken gate that never quite closes properly.`,
-        "Sample 25": `The telegram arrived on a Thursday, its yellow paper stark against the mahogany desk. Elizabeth read the words three times before their meaning penetrated the careful composure she'd maintained throughout the war. James would not be coming home.`,
-        "Sample 26": `So there I was, standing in line at the grocery store, minding my own business, when this woman behind me starts going off about organic vegetables. I'm not kidding – she had opinions about every single item in my cart. Every. Single. Item.`,
-        "Sample 27": `Look, here's the thing about these situations. You can overthink them all you want, but sometimes you just have to trust your gut. I learned that the hard way, believe me. When something feels off, it usually is.`,
-        "Sample 28": `The winter of 1847 proved particularly harsh for the settlers. Supply lines had been disrupted by early storms, and the community faced shortages of both food and fuel. Yet through careful rationing and collective effort, most families survived until spring's arrival brought renewed hope.`,
-        "Sample 29": `Records from the township indicate that construction began in earnest during the autumn months. Local craftsmen were employed wherever possible, though specialized work required bringing in artisans from distant cities. The project consumed nearly three years before completion.`,
-        "Sample 30": `I remember distinctly the sound of horses' hooves on cobblestones that morning. Mother had warned us to stay indoors, but curiosity drew me to the window. What I witnessed there would forever change my understanding of courage and sacrifice.`
+        "CONTENT-NEUTRAL": {
+          "Formal and Functional Relationships": `There are two broad types of relationships: formal and functional.
+Formal relationships hold between descriptions. A description is any statement that can be true or false.
+Example of a formal relationship: The description that a shape is a square cannot be true unless the description that it has four equal sides is true. Therefore, a shape's being a square depends on its having four equal sides.
+
+Functional relationships hold between events or conditions. (An event is anything that happens in time.)
+Example of a functional relationship: A plant cannot grow without water. Therefore, a plant's growth depends on its receiving water.
+
+The first type is structural, i.e., it holds between statements about features.
+The second is operational, i.e., it holds between things in the world as they act or change.
+
+Descriptions as objects of consideration
+The objects of evaluation are descriptions. Something is not evaluated unless it is described, and it is not described unless it can be stated. One can notice non-descriptions — sounds, objects, movements — but in the relevant sense one evaluates descriptions of them.
+
+Relationships not known through direct observation
+Some relationships are known, not through direct observation, but through reasoning. Such relationships are structural, as opposed to observational. Examples of structural relationships are:
+
+If A, then A or B.
+
+All tools require some form of use.
+
+Nothing can be both moving and perfectly still.
+
+There are no rules without conditions.
+
+1 obviously expresses a relationship; 2–4 do so less obviously, as their meanings are:
+
+2*. A tool's being functional depends on its being usable.
+3*. An object's being both moving and still depends on contradictory conditions, which cannot occur together.
+4*. The existence of rules depends on the existence of conditions to which they apply.
+
+Structural truth and structural understanding
+Structural understanding is always understanding of relationships. Observational understanding can be either direct or indirect; the same is true of structural understanding.`,
+
+          "Alternative Account of Explanatory Efficiency": `A continuation of the earlier case will make it clear what this means and why it matters. Why doesn't the outcome change under the given conditions? Because, says the standard account, the key factor remained in place. But, the skeptic will counter, perhaps we can discard that account; perhaps there's an alternative that fits the observations equally well. But, I would respond, even granting for argument's sake that such an alternative exists, it doesn't follow that it avoids more gaps than the one it replaces. It doesn't follow that it is comparable from a trade-off standpoint to the original—that it reduces as many issues as the old view while introducing no more new ones. In fact, the opposite often holds. Consider the alternative mentioned earlier. The cost of that account—meaning what new puzzles it creates—is vastly greater than its value—meaning what old puzzles it removes. It would be difficult to devise an account inconsistent with the conventional one that, while still matching the relevant evidence, is equally efficient in explanatory terms. You can test this for yourself. If there is reason to think even one such account exists, it is not because it has ever been produced. That reason, if it exists, must be purely theoretical. And for reasons soon to be made clear, no such purely theoretical reason can justify accepting it.`
+        },
+        
+        "EPISTEMOLOGY": {
+          "Rational Belief and Underlying Structure": `When would it become rational to believe that, next time, you're more likely than not to roll this as opposed to that number—that, for example, you're especially likely to roll a 27? This belief becomes rational when, and only when, you have reason to believe that a 27-roll is favored by the structures involved in the game. And that belief, in its turn, is rational if you know that circumstances at all like the following obtain: *The dice are magnetically attracted to the 27-slot. *On any given occasion, you have an unconscious intention to roll a 27 (even though you have no conscious intention of doing this), and you're such a talented dice-thrower that, if you can roll a 27 if it is your (subconscious) intention to do so. *The 27-slot is much bigger than any of the other slots. In fact, it takes up so much space on the roulette wheel that the remaining spaces are too small for the ball to fit into them. You are rational to believe that you'll continue to roll 27s to the extent that your having thus far rolled multiple 27s in a row gives you reason to believe there to be some underlying structure favoring that outcome.`,
+
+          "Hume, Induction, and the Logic of Explanation": `We haven't yet refuted Hume's argument—we've only taken the first step towards doing so. Hume could defend his view against what we've said thus by far by saying the following: Suppose that, to explain why all phi's thus far known are psi's, you posit some underlying structure or law that disposes phi's to be psi's. Unless you think that nature is uniform, you have no right to expect that connection to continue to hold. But if, in order to deal with this, you suppose that nature is uniform, then you're caught in the vicious circle that I described. HR is correct. One is indeed caught in a vicious circle if, in order to show the legitimacy of inductive inference, one assumes UP; and the reason is that, just as Hume says, UP can be known, if at all, only on inductive grounds.`,
+
+          "Explanatory Goodness vs. Correctness": `For an explanation to be good isn't for it to be correct. Sometimes the right explanations are bad ones. A story will make this clear. I'm on a bus. The bus driver is smiling. A mystery! 'What on Earth does he have to smile about?' I ask myself. His job is so boring, and his life must therefore be such a horror.' But then I remember that, just a minute ago, a disembarking passenger gave him fifty $100 bills as a tip. So I have my explanation: 'he just came into a lot of money.' But here is the very different explanation tendered by my seatmate Gus, who, in addition to being unintelligent, is also completely insane. 'The bus-driver is a CIA assassin. This morning he killed somebody who, by coincidence, had the name Benjamin Franklin. Benjamin Franklin (the statesman, not the murder victim) is on the $100 bill. So when the bus driver saw those bills, he immediately thought of that morning's murder. The murder was a particularly enjoyable one; the bus driver is remembering the fun he had, and that's why he's smiling.'`,
+
+          "Knowledge vs. Awareness": `Knowledge is conceptually articulated awareness. In order for me to know that my shoes are uncomfortably tight, I need to have the concepts shoe, tight, discomfort, etc. I do not need to have these concepts—or, arguably, any concepts—to be aware of the uncomfortable tightness in my shoes. My knowledge of that truth is a conceptualization of my awareness of that state of affairs. Equivalently, there are two kinds of awareness: propositional and objectual. My visual perception of the dog in front of me is a case of objectual awareness, as is my awareness of the tightness of my shoes. My knowledge that there is a dog in front of me is a case of proposition-awareness, as is my knowledge that my shoes are uncomfortably tight.`
+        },
+
+        "PARADOXES": {
+          "The Loser Paradox": `People who are the bottom of a hierarchy are far less likely to spurn that hierarchy than they are to use it against people who are trying to climb the ranks of that hierarchy. The person who never graduates from college may in some contexts claim that a college degree is worthless, but he is unlikely to act accordingly. When he comes across someone without a college degree who is trying to make something of himself, he is likely to pounce on that person, claiming he is an uncredentialed fraud. Explanation: Losers want others to share their coffin, and if that involves hyper-valuing the very people or institutions that put them in that coffin, then so be it.`,
+
+          "The Sour Secretary Paradox": `The more useless a given employee is to the organization that employs her, the more unstintingly she will toe that organization's line. This is a corollary of the loser paradox.`,
+
+          "The Indie Writer's Paradox": `People don't give good reviews to writers who do not already have positive reviews. Analysis: This is a veridical paradox, in the sense that it describes an actual vicious circle and does not represent a logical blunder. An independent writer is by definition one who does not have a marketing apparatus behind him, and such a writer depends on uncoerced positive reviews. But people are extremely reluctant to give good reviews to writers who are not popular already or who do not have the weight of some institution behind them.`,
+
+          "Paradox of Connectedness": `Communications technology is supposed to connect us but separates us into self-contained, non-interacting units. Solution: Communications technology is not supposed to connect us emotionally. On the contrary, it is supposed to connect us in such a way that we can transact without having to bond emotionally. And that is what it does. It connects us logically while disconnecting us emotionally.`,
+
+          "Arrow's Information Paradox": `If you don't know what it is, you don't buy it. Therefore, you don't buy information unless you know what it is. But if you know what it is, you don't need to buy it. But information is bought. Solution: The obvious solution is that information can be described without being disclosed. I can tell you that I have the so and so's phone number without giving you that number, and the circumstances may give you reason to believe me.`,
+
+          "Buridan's Ass": `An ass that has to choose between food and water and is exactly as hungry as it is thirsty cannot make a choice and will therefore be paralyzed by indecision. But such an ass would in fact be able to make a decision. Explanation: This isn't exactly a paradox. There is nothing absurd in the supposition that a creature in such a situation might simply 'halt', and we don't know that actual biological creatures would not in fact halt in such a situation, since it seldom if ever happens that a creature is confronted with options that are exactly equally appealing.`
+        }
       };
       
       res.json({ samples });
@@ -2214,23 +2244,87 @@ PROVIDE A FINAL VALIDATED SCORE OUT OF 100 IN THE FORMAT: SCORE: X/100
     }
   });
 
-  // Style presets endpoint
+  // Style presets endpoint - COMPLETE CATEGORIZED SYSTEM
   app.get("/api/style-presets", async (req, res) => {
     try {
       const presets = {
-        "Mixed cadence": "Alternate short (5–12 words) and long (20–35 words) sentences; avoid uniform rhythm.",
-        "Compression — medium (−30%)": "Trim hard; delete throat-clearing; tighten syntax. Target ≈30% shorter.",
-        "Kill stock transitions": "Delete 'Moreover/Furthermore/In conclusion' everywhere.",
-        "Hedge once": "Use exactly one hedge: probably/roughly/more or less.",
-        "Drop intensifiers": "Remove 'very/clearly/obviously/significantly'.",
-        "Low-heat voice": "Prefer plain verbs; avoid showy synonyms.",
-        "One aside": "Allow one short parenthetical or em-dash aside; strictly factual.",
-        "Asymmetric emphasis": "Linger on the main claim; compress secondary points sharply.",
-        "Topic snap": "Allow one abrupt focus change; no recap.",
-        "No lists": "Output as continuous prose; remove bullets/numbering.",
-        "Exact nouns": "Replace ambiguous pronouns with exact nouns.",
-        "Lean & Sharp": "Compression — medium (−30%); Mixed cadence; Imply one step; Kill stock transitions",
-        "Analytic": "Clause surgery; Front-load claim; Scope check; Exact nouns; No lists",
+        // MOST IMPORTANT (1-8) - CRITICAL FOR HUMANIZATION
+        "CRITICAL_FOR_HUMANIZATION": {
+          "1. Mixed cadence + clause sprawl": "Alternate short and long sentences; allow some long sentences to wander with extra clauses.",
+          "2. Asymmetric emphasis": "Over-elaborate one point; compress or skate past another.", 
+          "3. One aside": "Add a quick parenthetical or em-dash remark — factual, not jokey.",
+          "4. Hedge twice": "Use two mild uncertainty markers (\"probably,\" \"seems,\" \"roughly,\" \"I think\").",
+          "5. Local disfluency": "Keep one redundant or slightly awkward phrase that still makes sense.",
+          "6. Analogy injection": "Insert a short, concrete comparison to something unrelated but illustrative.",
+          "7. Topic snap": "Abruptly shift focus once, then return.",
+          "8. Friction detail": "Drop in a small, seemingly unnecessary but real-world-plausible detail."
+        },
+
+        // STRUCTURE & CADENCE
+        "STRUCTURE_AND_CADENCE": {
+          "Compression — light (−15%)": "Cut filler; merge short clauses; keep meaning.",
+          "Compression — medium (−30%)": "Trim hard; delete throat-clearing; tighten syntax.",
+          "Compression — heavy (−45%)": "Sever redundancies; collapse repeats; keep core claims.",
+          "DECREASE BY 50%": "REDUCE THE LENGTH BY HALF WHILE PRESERVING MEANING",
+          "INCREASE BY 150%": "EXPAND THE TEXT TO 150% LONGER WITH ADDITIONAL DETAIL AND ELABORATION",
+          "Mixed cadence": "Alternate 5–35-word sentences; no uniform rhythm.",
+          "Clause surgery": "Reorder main/subordinate clauses in 30% of sentences.",
+          "Front-load claim": "Put the main conclusion in sentence 1; support follows.",
+          "Back-load claim": "Delay the conclusion to the final 2–3 sentences.",
+          "Seam/pivot": "Drop smooth connectors once; abrupt turn is fine."
+        },
+
+        // FRAMING & INFERENCE  
+        "FRAMING_AND_INFERENCE": {
+          "Imply one step": "Omit an obvious inferential step; leave it implicit.",
+          "Conditional framing": "Recast one key sentence as \"If/Unless …, then …\".",
+          "Local contrast": "Use \"but/except/aside\" once to mark a boundary—no new facts.",
+          "Scope check": "Replace one absolute with a bounded form (\"in cases like these\")."
+        },
+
+        // DICTION & TONE
+        "DICTION_AND_TONE": {
+          "Deflate jargon": "Swap nominalizations for verbs where safe (e.g., \"utilization\" → \"use\").",
+          "Kill stock transitions": "Delete \"Moreover/Furthermore/In conclusion\" everywhere.",
+          "Hedge once": "Use exactly one: \"probably/roughly/more or less.\"",
+          "Drop intensifiers": "Remove \"very/clearly/obviously/significantly.\"",
+          "Low-heat voice": "Prefer plain verbs; avoid showy synonyms.",
+          "One aside": "One short parenthetical or em-dash aside; keep it factual."
+        },
+
+        // CONCRETENESS & BENCHMARKS
+        "CONCRETENESS_AND_BENCHMARKS": {
+          "Concrete benchmark": "Replace one vague scale with a testable one (e.g., \"enough to X\").",
+          "Swap generic example": "If the source has an example, make it slightly more specific; else skip.",
+          "Metric nudge": "Replace \"more/better\" with a minimal, source-safe comparator (\"more than last case\")."
+        },
+
+        // ASYMMETRY & FOCUS
+        "ASYMMETRY_AND_FOCUS": {
+          "Asymmetric emphasis": "Linger on the main claim; compress secondary points sharply.",
+          "Cull repeats": "Delete duplicated sentences/ideas; keep the strongest instance.",
+          "Topic snap": "Change focus abruptly once; no recap."
+        },
+
+        // FORMATTING & OUTPUT HYGIENE
+        "FORMATTING_AND_OUTPUT_HYGIENE": {
+          "No lists": "Force continuous prose; remove bullets/numbering.",
+          "No meta": "No prefaces, apologies, or \"as requested\" scaffolding.",
+          "Exact nouns": "Replace vague pronouns where antecedent is ambiguous.",
+          "Quote once": "If the source contains a strong phrase, quote it once; else skip."
+        },
+
+        // SAFETY / GUARDRAILS
+        "SAFETY_GUARDRAILS": {
+          "Claim lock": "Do not add examples, scenarios, or data not present in the source.",
+          "Entity lock": "Keep names, counts, and attributions exactly as given."
+        },
+
+        // COMBO PRESETS (ONE-LINERS)
+        "COMBO_PRESETS": {
+          "Lean & Sharp": "Compression-medium + mixed cadence + imply one step + kill stock transitions.",
+          "Analytic": "Clause surgery + front-load claim + scope check + exact nouns + no lists."
+        }
       };
       
       res.json({ presets });
