@@ -1763,19 +1763,6 @@ PROVIDE A FINAL VALIDATED SCORE OUT OF 100 IN THE FORMAT: SCORE: X/100
     }
   });
 
-  // Get writing samples
-  app.get("/api/writing-samples", async (_req: Request, res: Response) => {
-    try {
-      const { WRITING_SAMPLES } = await import('./services/gptBypassHumanizer');
-      res.json({ samples: WRITING_SAMPLES });
-    } catch (error: any) {
-      console.error("Error getting writing samples:", error);
-      res.status(500).json({ 
-        error: true, 
-        message: "Failed to load writing samples" 
-      });
-    }
-  });
 
   // Get style presets
   app.get("/api/style-presets", async (_req: Request, res: Response) => {
