@@ -126,7 +126,7 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
   const [humanizerProvider, setHumanizerProvider] = useState<LLMProvider>("zhi2"); // Default to Anthropic
   const [writingSamples, setWritingSamples] = useState<any>({});
   const [stylePresets, setStylePresets] = useState<any>({});
-  const [selectedWritingSample, setSelectedWritingSample] = useState("");
+  const [selectedWritingSample, setSelectedWritingSample] = useState("Content-Neutral|Formal and Functional Relationships");
   const [chunks, setChunks] = useState<any[]>([]);
   const [selectedChunkIds, setSelectedChunkIds] = useState<string[]>([]);
   const [showChunkSelector, setShowChunkSelector] = useState(false);
@@ -139,6 +139,11 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
         if (response.ok) {
           const data = await response.json();
           setWritingSamples(data.samples);
+          
+          // Auto-populate Box B with default sample
+          if (data.samples['Content-Neutral'] && data.samples['Content-Neutral']['Formal and Functional Relationships']) {
+            setBoxB(data.samples['Content-Neutral']['Formal and Functional Relationships']);
+          }
         }
       } catch (error) {
         console.error('Failed to load writing samples:', error);
