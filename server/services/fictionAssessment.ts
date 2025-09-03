@@ -87,24 +87,34 @@ function parseFictionAssessmentResponse(response: string): FictionAssessmentResu
 
   const extractScore = (section: string): number => {
     const patterns = [
+      // Handle ranges like "Score: 90-94"
+      new RegExp(`${section}[:\\s]*Score:\\s*(\\d+)-(\\d+)`, 'i'),
+      // Handle direct scores like "WORLD COHERENCE: 85/100"
       new RegExp(`${section}:\\s*(\\d+)/100`, 'i'),
-      new RegExp(`${section}:\\s*(\\d+)`, 'i')
+      // Handle direct scores without /100
+      new RegExp(`${section}:\\s*(\\d+)`, 'i'),
+      // Handle "Score: X" format
+      new RegExp(`Score:\\s*(\\d+)(?:/100)?`, 'i')
     ];
     
     for (const pattern of patterns) {
       const match = cleanResponse.match(pattern);
       if (match) {
-        const score = parseInt(match[1]);
-        return Math.min(Math.max(score, 0), 100);
+        if (match[2]) {
+          // Range format - take the middle value
+          const low = parseInt(match[1]);
+          const high = parseInt(match[2]);
+          const score = Math.round((low + high) / 2);
+          return Math.min(Math.max(score, 0), 100);
+        } else {
+          const score = parseInt(match[1]);
+          return Math.min(Math.max(score, 0), 100);
+        }
       }
     }
     
-    // Default scoring for fiction based on response quality
-    const hasDetailedAnalysis = cleanResponse.length > 2000;
-    const hasThematicDiscussion = cleanResponse.includes('theme') || cleanResponse.includes('meaning');
-    const hasCharacterAnalysis = cleanResponse.includes('character') || cleanResponse.includes('emotion');
-    
-    if (hasDetailedAnalysis && hasThematicDiscussion && hasCharacterAnalysis) return 85;
+    // If score extraction fails, return a neutral score
+    console.log(`Warning: Could not extract ${section} score from response`);
     return 75;
   };
 
