@@ -11,6 +11,7 @@ import SemanticDensityAnalyzer from "@/components/SemanticDensityAnalyzer";
 import CaseAssessmentModal from "@/components/CaseAssessmentModal";
 import { DocumentComparisonModal } from "@/components/DocumentComparisonModal";
 import { FictionAssessmentModal } from "@/components/FictionAssessmentModal";
+import { FictionAssessmentPopup } from "@/components/FictionAssessmentPopup";
 import { FictionComparisonModal } from "@/components/FictionComparisonModal";
 
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Brain, Trash2, FileEdit, Loader2, Zap, Clock, Sparkles, Download, Shield, RefreshCw, Upload, FileText } from "lucide-react";
+import { Brain, Trash2, FileEdit, Loader2, Zap, Clock, Sparkles, Download, Shield, RefreshCw, Upload, FileText, BookOpen } from "lucide-react";
 import { analyzeDocument, compareDocuments, checkForAI } from "@/lib/analysis";
 import { AnalysisMode, DocumentInput as DocumentInputType, AIDetectionResult, DocumentAnalysis, DocumentComparison } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
@@ -73,6 +74,9 @@ const HomePage: React.FC = () => {
   const [currentFictionDocument, setCurrentFictionDocument] = useState<"A" | "B">("A");
   const [isFictionAssessmentLoading, setIsFictionAssessmentLoading] = useState(false);
   const [fictionAssessmentResult, setFictionAssessmentResult] = useState<any>(null);
+  
+  // Standalone Fiction Assessment Popup State
+  const [fictionPopupOpen, setFictionPopupOpen] = useState(false);
 
   // State for maximize intelligence feature
   const [maximizeIntelligenceModalOpen, setMaximizeIntelligenceModalOpen] = useState(false);
@@ -1163,6 +1167,23 @@ Generated on: ${new Date().toLocaleString()}`;
         <div className="flex flex-wrap gap-8 items-center">
           <ModeToggle mode={mode} setMode={setMode} />
           
+          {/* Fiction Assessment Button */}
+          <div className="border p-4 rounded-lg bg-white shadow-sm">
+            <h3 className="text-lg font-medium text-gray-800 mb-3">Fiction Analysis</h3>
+            <Button
+              onClick={() => setFictionPopupOpen(true)}
+              variant="outline"
+              className="flex items-center gap-2 bg-purple-50 hover:bg-purple-100 border-purple-200 text-purple-700"
+              data-testid="button-fiction-assessment"
+            >
+              <BookOpen className="w-4 h-4" />
+              Assess Fiction
+            </Button>
+            <p className="text-xs text-gray-500 mt-2">
+              Analyze literary fiction with specialized assessment criteria
+            </p>
+          </div>
+          
           {/* Analysis Mode Toggle */}
           <div className="border p-4 rounded-lg bg-white shadow-sm">
             <h3 className="text-lg font-medium text-gray-800 mb-3">Analysis Mode</h3>
@@ -2093,6 +2114,12 @@ Generated on: ${new Date().toLocaleString()}`;
         onSendToInput={(content: string) => {
           setDocumentA({ ...documentA, content: content });
         }}
+      />
+
+      {/* Fiction Assessment Popup */}
+      <FictionAssessmentPopup 
+        isOpen={fictionPopupOpen}
+        onClose={() => setFictionPopupOpen(false)}
       />
     </div>
   );
