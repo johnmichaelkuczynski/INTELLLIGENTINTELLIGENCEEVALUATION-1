@@ -1644,5 +1644,55 @@ PROVIDE A FINAL VALIDATED SCORE OUT OF 100 IN THE FORMAT: SCORE: X/100
     }
   });
 
+  // HUMANIZER - GPT Bypass style matching rewrite
+  app.post("/api/humanizer", async (req: Request, res: Response) => {
+    try {
+      const { boxA, boxB, boxC, provider = 'zhi1', customInstructions } = req.body;
+
+      // Validate required inputs
+      if (!boxA || !boxB || !boxC) {
+        return res.status(400).json({ 
+          error: "Box A (sample text), Box B (target style), and Box C (input text) are all required" 
+        });
+      }
+
+      if (typeof boxA !== 'string' || typeof boxB !== 'string' || typeof boxC !== 'string') {
+        return res.status(400).json({ 
+          error: "All inputs must be strings" 
+        });
+      }
+
+      console.log(`Starting humanizer with ${provider}...`);
+      console.log(`Box A: ${boxA.length} chars, Box B: ${boxB.length} chars, Box C: ${boxC.length} chars`);
+      
+      const { performHumanization, processLargeText } = await import('./services/humanizer');
+      
+      const request = {
+        boxA,
+        boxB,
+        boxC,
+        provider,
+        customInstructions
+      };
+      
+      // Choose processing method based on text length
+      const result = boxC.length > 3000 ? 
+        await processLargeText(request) : 
+        await performHumanization(request);
+      
+      res.json({
+        success: true,
+        result: result
+      });
+      
+    } catch (error: any) {
+      console.error("Humanizer error:", error);
+      res.status(500).json({ 
+        error: true, 
+        message: error.message || "Humanizer failed" 
+      });
+    }
+  });
+
   return app;
 }

@@ -108,6 +108,16 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
   // State for LLM provider
   const [selectedProvider, setSelectedProvider] = useState<LLMProvider>("zhi1");
 
+  // State for Humanizer function
+  const [showHumanizer, setShowHumanizer] = useState(false);
+  const [boxA, setBoxA] = useState("");
+  const [boxB, setBoxB] = useState("");
+  const [boxC, setBoxC] = useState("");
+  const [humanizerCustomInstructions, setHumanizerCustomInstructions] = useState("");
+  const [isHumanizerLoading, setIsHumanizerLoading] = useState(false);
+  const [humanizerResult, setHumanizerResult] = useState<any>(null);
+  const [humanizerResultsModalOpen, setHumanizerResultsModalOpen] = useState(false);
+
   // FIXED streaming function
   const startStreaming = async (text: string, provider: string) => {
     console.log('startStreaming called with:', { text: text.slice(0, 50), provider });
@@ -605,6 +615,69 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
       setMaximizeIntelligenceModalOpen(false);
     }
   };
+
+  // Handler for Humanizer
+  const handleHumanizer = async () => {
+    if (!boxA.trim() || !boxB.trim() || !boxC.trim()) {
+      alert("Please fill in all three boxes (Box A, Box B, and Box C) to proceed with style matching.");
+      return;
+    }
+
+    // Check if the selected provider is available (map ZHI names to original API names)
+    const apiKeyMapping: Record<string, string> = {
+      'zhi1': 'openai',
+      'zhi2': 'anthropic', 
+      'zhi3': 'deepseek',
+      'zhi4': 'perplexity'
+    };
+    const actualApiKey = apiKeyMapping[selectedProvider] || selectedProvider;
+    if (selectedProvider !== "all" && !apiStatus[actualApiKey as keyof typeof apiStatus]) {
+      alert(`The ${selectedProvider} API key is not configured or is invalid. Please select a different provider or ensure the API key is properly set.`);
+      return;
+    }
+
+    setIsHumanizerLoading(true);
+    try {
+      const provider = selectedProvider === "all" ? "zhi1" : selectedProvider;
+      
+      const response = await fetch('/api/humanizer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          boxA: boxA.trim(),
+          boxB: boxB.trim(),
+          boxC: boxC.trim(),
+          provider: provider,
+          customInstructions: humanizerCustomInstructions.trim() || undefined
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(errorData.message || `Humanizer failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setHumanizerResult(data.result);
+      setHumanizerResultsModalOpen(true);
+      
+    } catch (error: any) {
+      console.error("Humanizer error:", error);
+      alert(`Humanizer failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+    } finally {
+      setIsHumanizerLoading(false);
+    }
+  };
+
+  // Handler to clear all humanizer boxes
+  const clearHumanizerBoxes = () => {
+    setBoxA("");
+    setBoxB("");  
+    setBoxC("");
+    setHumanizerCustomInstructions("");
+    setHumanizerResult(null);
+  };
+
   // Handler for downloading rewrite results
 
   const handleDownloadRewrite = () => {
@@ -1390,6 +1463,194 @@ Generated on: ${new Date().toLocaleString()}`;
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Humanizer Results Modal */}
+      <Dialog open={humanizerResultsModalOpen} onOpenChange={setHumanizerResultsModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileEdit className="w-6 h-6 text-purple-600" />
+              Humanizer Results - Style Matching Complete
+            </DialogTitle>
+            <DialogDescription>
+              Your text has been rewritten to match the exact style of the provided sample.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {humanizerResult && (
+            <div className="space-y-6">
+              {/* Style Analysis */}
+              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+                <h3 className="font-semibold text-purple-800 dark:text-purple-200 mb-2">Style Analysis</h3>
+                <div className="text-sm whitespace-pre-wrap">{humanizerResult.styleAnalysis}</div>
+              </div>
+
+              {/* Rewritten Text */}
+              <div>
+                <h3 className="font-semibold mb-2">Rewritten Text</h3>
+                <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-800 max-h-60 overflow-y-auto">
+                  <p className="whitespace-pre-wrap">{humanizerResult.rewrittenText}</p>
+                </div>
+              </div>
+
+              {/* Original Text for comparison */}
+              <div>
+                <h3 className="font-semibold mb-2">Original Text</h3>
+                <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-800 max-h-40 overflow-y-auto">
+                  <p className="whitespace-pre-wrap text-sm text-gray-600 dark:text-gray-400">{humanizerResult.originalText}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setHumanizerResultsModalOpen(false)}
+              data-testid="button-close-humanizer-results"
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* HUMANIZER SECTION - GPT Bypass Style Matching */}
+      <div className="mt-16 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/10 dark:to-indigo-900/10 p-8 rounded-lg border-2 border-purple-200 dark:border-purple-700">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-purple-900 dark:text-purple-100 mb-3 flex items-center justify-center gap-3">
+              <FileEdit className="w-8 h-8 text-purple-600" />
+              GPT Bypass Humanizer
+            </h2>
+            <p className="text-lg text-gray-700 dark:text-gray-300 mb-2">
+              Rewrite text to match exact stylistic patterns - Box A → Box B Style → Box C Output
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              This tool analyzes the style differences between Box A and Box B, then applies those exact transformations to Box C
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {/* Box A */}
+            <div className="space-y-3">
+              <label className="block text-sm font-semibold text-purple-800 dark:text-purple-200">
+                Box A - Sample Text
+              </label>
+              <Textarea
+                value={boxA}
+                onChange={(e) => setBoxA(e.target.value)}
+                placeholder="Enter the original style sample text here..."
+                className="min-h-[200px] border-purple-200 dark:border-purple-700 focus:border-purple-500 dark:focus:border-purple-400"
+                data-testid="textarea-box-a"
+              />
+              <p className="text-xs text-gray-500">Reference style sample</p>
+            </div>
+
+            {/* Box B */}
+            <div className="space-y-3">
+              <label className="block text-sm font-semibold text-purple-800 dark:text-purple-200">
+                Box B - Target Style
+              </label>
+              <Textarea
+                value={boxB}
+                onChange={(e) => setBoxB(e.target.value)}
+                placeholder="Enter the target style example here..."
+                className="min-h-[200px] border-purple-200 dark:border-purple-700 focus:border-purple-500 dark:focus:border-purple-400"
+                data-testid="textarea-box-b"
+              />
+              <p className="text-xs text-gray-500">Style to match</p>
+            </div>
+
+            {/* Box C */}
+            <div className="space-y-3">
+              <label className="block text-sm font-semibold text-purple-800 dark:text-purple-200">
+                Box C - Text to Rewrite
+              </label>
+              <Textarea
+                value={boxC}
+                onChange={(e) => setBoxC(e.target.value)}
+                placeholder="Enter the text you want to rewrite in Box B's style..."
+                className="min-h-[200px] border-purple-200 dark:border-purple-700 focus:border-purple-500 dark:focus:border-purple-400"
+                data-testid="textarea-box-c"
+              />
+              <p className="text-xs text-gray-500">Text to be rewritten</p>
+            </div>
+          </div>
+
+          {/* Custom Instructions */}
+          <div className="mt-6">
+            <label className="block text-sm font-semibold text-purple-800 dark:text-purple-200 mb-2">
+              Custom Instructions (Optional)
+            </label>
+            <Textarea
+              value={humanizerCustomInstructions}
+              onChange={(e) => setHumanizerCustomInstructions(e.target.value)}
+              placeholder="Add any specific instructions for style matching (e.g., 'focus on sentence structure', 'maintain formal tone', etc.)..."
+              className="border-purple-200 dark:border-purple-700 focus:border-purple-500 dark:focus:border-purple-400"
+              rows={3}
+              data-testid="textarea-humanizer-custom-instructions"
+            />
+          </div>
+
+          {/* Provider Selection */}
+          <div className="mt-6">
+            <label className="block text-sm font-semibold text-purple-800 dark:text-purple-200 mb-2">
+              AI Provider
+            </label>
+            <ProviderSelector 
+              selectedProvider={selectedProvider}
+              onProviderChange={setSelectedProvider}
+              label=""
+              apiStatus={apiStatus}
+              className="mb-3"
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-4 mt-8 justify-center">
+            <Button
+              onClick={clearHumanizerBoxes}
+              variant="outline"
+              className="px-6 py-3 border-purple-300 text-purple-700 hover:bg-purple-50 dark:border-purple-600 dark:text-purple-300 dark:hover:bg-purple-900/20"
+              data-testid="button-clear-humanizer"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Clear All
+            </Button>
+            <Button
+              onClick={handleHumanizer}
+              disabled={isHumanizerLoading || !boxA.trim() || !boxB.trim() || !boxC.trim()}
+              className="px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-50"
+              data-testid="button-humanizer-process"
+            >
+              {isHumanizerLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Processing Style Match...
+                </>
+              ) : (
+                <>
+                  <FileEdit className="w-4 h-4 mr-2" />
+                  Process Style Match
+                </>
+              )}
+            </Button>
+          </div>
+
+          {/* Instructions */}
+          <div className="mt-8 p-4 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+            <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">How to Use:</h4>
+            <ol className="list-decimal list-inside text-sm text-purple-800 dark:text-purple-200 space-y-1">
+              <li>Box A: Enter original style sample text</li>
+              <li>Box B: Enter the target style you want to match</li>
+              <li>Box C: Enter the text you want to rewrite</li>
+              <li>The AI will analyze style differences between A and B</li>
+              <li>It will then rewrite Box C to match Box B's exact style</li>
+            </ol>
+          </div>
+        </div>
+      </div>
 
       {/* Chat Dialog - Always visible below everything */}
       <ChatDialog 
