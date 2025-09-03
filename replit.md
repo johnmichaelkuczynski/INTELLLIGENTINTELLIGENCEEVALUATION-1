@@ -4,6 +4,11 @@
 This platform analyzes written text to assess the intelligence and cognitive fingerprint of authors using multi-model AI evaluation. It provides document analysis, AI detection, translation, comprehensive cognitive profiling, and intelligent text rewriting capabilities. The project's vision is to offer deep insights into cognitive abilities and thought processes from written content, with advanced features for maximizing intelligence scores through iterative rewriting.
 
 ## Recent Changes
+- **January 2025**: **MAJOR FIX** - Completely resolved case assessment scoring and formatting issues
+  - Fixed AI prompt to request structured scores in parseable format (PROOF EFFECTIVENESS: 85/100)
+  - Implemented fallback scoring system for reliable score extraction 
+  - Enhanced text formatting to properly display sections (Strengths, Weaknesses, Counterarguments)
+  - Case assessments now show real numerical scores instead of 0/100
 - **January 2025**: Fixed intelligent rewrite function provider mapping (zhi1→openai, zhi2→anthropic, zhi3→deepseek)
 - **January 2025**: Resolved multiple analysis UX issue - can now run consecutive analyses without clearing screen
 - **January 2025**: Successfully implemented Intelligent Rewrite Function with recursive capability for maximizing intelligence scores
