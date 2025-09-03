@@ -259,9 +259,12 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
       return;
     }
 
+    // Reset any previous streaming state
+    setIsStreaming(false);
+    setStreamingContent('');
+    
     // Start REAL-TIME streaming for case assessment
     setIsStreaming(true);
-    setStreamingContent('');
     setIsCaseAssessmentLoading(true);
     setCaseAssessmentResult(null);
 
@@ -414,9 +417,12 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
       return;
     }
 
+    // Reset any previous streaming state
+    setIsStreaming(false);
+    setStreamingContent('');
+    
     // Start REAL-TIME streaming for fiction assessment
     setIsStreaming(true);
-    setStreamingContent('');
     setIsFictionAssessmentLoading(true);
     setFictionAssessmentResult(null);
 
@@ -491,6 +497,7 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
     } finally {
       setIsFictionAssessmentLoading(false);
       setIsStreaming(false);
+      setStreamingContent(''); // Clean up streaming content
     }
   };
 
@@ -674,9 +681,12 @@ Generated on: ${new Date().toLocaleString()}`;
           const data = await response.json();
           setAnalysisA(data.analysis || data.result);
         } else {
+          // Reset any previous streaming state
+          setIsStreaming(false);
+          setStreamingContent('');
+          
           // Comprehensive analysis - streaming
           setIsStreaming(true);
-          setStreamingContent('');
           
           const response = await fetch('/api/stream-comprehensive', {
             method: 'POST',
@@ -718,6 +728,7 @@ Generated on: ${new Date().toLocaleString()}`;
           }
           
           setIsStreaming(false);
+          setStreamingContent(''); // Clean up streaming content
         }
         
       } catch (error) {

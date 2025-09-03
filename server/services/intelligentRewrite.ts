@@ -18,8 +18,19 @@ interface IntelligentRewriteResult {
   rewriteReport: string;
 }
 
+// Map ZHI names to actual provider names
+function mapZhiToProvider(zhiName: string): string {
+  const mapping: Record<string, string> = {
+    'zhi1': 'openai',
+    'zhi2': 'anthropic', 
+    'zhi3': 'deepseek',
+  };
+  return mapping[zhiName] || zhiName;
+}
+
 export async function performIntelligentRewrite(request: IntelligentRewriteRequest): Promise<IntelligentRewriteResult> {
-  const { text, customInstructions, provider } = request;
+  const { text, customInstructions, provider: rawProvider } = request;
+  const provider = mapZhiToProvider(rawProvider) as LLMProvider;
   
   console.log(`Starting intelligent rewrite with ${provider}`);
   
