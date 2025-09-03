@@ -1240,26 +1240,21 @@ export async function registerRoutes(app: Express): Promise<Express> {
         return res.status(400).json({ error: "Text is required" });
       }
       
-      console.log(`Starting REAL-TIME fiction assessment streaming with ${provider} for text of length: ${text.length}`);
+      console.log(`Starting fiction assessment with ${provider} for text of length: ${text.length}`);
       
       // Call the fiction assessment service directly and return JSON
-      const { assessFiction } = require('./services/fictionAssessment');
-      const result = await assessFiction(text, provider);
+      const { performFictionAssessment } = require('./services/fictionAssessment');
+      const result = await performFictionAssessment(text, provider);
       
-      res.json(result);
-      res.setHeader('Connection', 'keep-alive');
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('X-Accel-Buffering', 'no');
-      
-      console.log(`Starting REAL-TIME fiction assessment streaming with ${provider} for text of length: ${text.length}`);
-      
-      const actualProvider = mapZhiToProvider(provider);
-      await streamFictionAssessment(text, actualProvider, res);
+      console.log('Fiction Assessment Result:', result);
+      res.json({
+        success: true,
+        result: result
+      });
       
     } catch (error: any) {
       console.error("Error in fiction assessment streaming:", error);
-      res.write(`ERROR: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      res.end();
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
     }
   });
 
