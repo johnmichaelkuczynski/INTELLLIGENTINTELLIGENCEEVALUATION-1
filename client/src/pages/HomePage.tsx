@@ -24,6 +24,8 @@ import { AnalysisMode, DocumentInput as DocumentInputType, AIDetectionResult, Do
 import { useToast } from "@/hooks/use-toast";
 
 const HomePage: React.FC = () => {
+  const { toast } = useToast();
+  
   // State for analysis mode
   const [mode, setMode] = useState<AnalysisMode>("single");
   
@@ -890,8 +892,7 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
       }
 
       const data = await response.json();
-      setHumanizerResult(data.result);
-      setHumanizerResultsModalOpen(true);
+      // Old humanizer removed - using new GPT Bypass Humanizer
       
     } catch (error: any) {
       console.error("Humanizer error:", error);
@@ -907,7 +908,7 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
     setBoxB("");  
     setBoxC("");
     setHumanizerCustomInstructions("");
-    setHumanizerResult(null);
+    // Old humanizer removed
   };
 
   // Handler for downloading rewrite results
@@ -1719,18 +1720,32 @@ Generated on: ${new Date().toLocaleString()}`;
             <div className="space-y-6">
               {/* Box A - AI Text to Humanize */}
               <div className="space-y-3">
-                <label className="block text-sm font-semibold text-red-800 dark:text-red-200">
-                  Box A - AI-Generated Text to Humanize
-                  {boxAScore !== null && (
-                    <span className={`ml-2 px-2 py-1 text-xs rounded ${
-                      boxAScore >= 70 ? 'bg-green-100 text-green-800' : 
-                      boxAScore >= 50 ? 'bg-yellow-100 text-yellow-800' : 
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {boxAScore}% HUMAN
-                    </span>
-                  )}
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="block text-sm font-semibold text-red-800 dark:text-red-200">
+                    Box A - AI-Generated Text to Humanize
+                  </label>
+                  <div className="flex items-center gap-2">
+                    {boxAScore !== null && (
+                      <div className={`px-3 py-1 text-sm font-bold rounded-full border-2 ${
+                        boxAScore >= 80 ? 'bg-green-100 border-green-500 text-green-800' : 
+                        boxAScore >= 60 ? 'bg-yellow-100 border-yellow-500 text-yellow-800' : 
+                        'bg-red-100 border-red-500 text-red-800'
+                      }`}>
+                        🤖 {boxAScore}% HUMAN
+                      </div>
+                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => boxA.trim() && evaluateTextAI(boxA, setBoxAScore)}
+                      disabled={!boxA.trim()}
+                      className="text-xs"
+                      data-testid="button-evaluate-box-a"
+                    >
+                      GPTZero Check
+                    </Button>
+                  </div>
+                </div>
                 <div className="relative">
                   <Textarea
                     value={boxA}
@@ -1797,18 +1812,32 @@ Generated on: ${new Date().toLocaleString()}`;
 
               {/* Box B - Human Style Sample */}
               <div className="space-y-3">
-                <label className="block text-sm font-semibold text-red-800 dark:text-red-200">
-                  Box B - Human Writing Style Sample
-                  {boxBScore !== null && (
-                    <span className={`ml-2 px-2 py-1 text-xs rounded ${
-                      boxBScore >= 70 ? 'bg-green-100 text-green-800' : 
-                      boxBScore >= 50 ? 'bg-yellow-100 text-yellow-800' : 
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {boxBScore}% HUMAN
-                    </span>
-                  )}
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="block text-sm font-semibold text-red-800 dark:text-red-200">
+                    Box B - Human Writing Style Sample
+                  </label>
+                  <div className="flex items-center gap-2">
+                    {boxBScore !== null && (
+                      <div className={`px-3 py-1 text-sm font-bold rounded-full border-2 ${
+                        boxBScore >= 80 ? 'bg-green-100 border-green-500 text-green-800' : 
+                        boxBScore >= 60 ? 'bg-yellow-100 border-yellow-500 text-yellow-800' : 
+                        'bg-red-100 border-red-500 text-red-800'
+                      }`}>
+                        👤 {boxBScore}% HUMAN
+                      </div>
+                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => boxB.trim() && evaluateTextAI(boxB, setBoxBScore)}
+                      disabled={!boxB.trim()}
+                      className="text-xs"
+                      data-testid="button-evaluate-box-b"
+                    >
+                      GPTZero Check
+                    </Button>
+                  </div>
+                </div>
                 
                 {/* Writing Samples Dropdown */}
                 <div className="flex gap-2">
@@ -2015,18 +2044,33 @@ Generated on: ${new Date().toLocaleString()}`;
 
           {/* Box C - Humanized Output - Always Visible */}
           <div className="mt-8 space-y-3">
-            <label className="block text-sm font-semibold text-red-800 dark:text-red-200">
-              Box C - Humanized Output
-              {boxCScore !== null && (
-                <span className={`ml-2 px-2 py-1 text-xs rounded ${
-                  boxCScore >= 70 ? 'bg-green-100 text-green-800' : 
-                  boxCScore >= 50 ? 'bg-yellow-100 text-yellow-800' : 
-                  'bg-red-100 text-red-800'
-                }`}>
-                  {boxCScore}% HUMAN
-                </span>
-              )}
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-semibold text-red-800 dark:text-red-200">
+                Box C - Humanized Output
+              </label>
+              <div className="flex items-center gap-2">
+                {boxCScore !== null && (
+                  <div className={`px-3 py-1 text-sm font-bold rounded-full border-2 ${
+                    boxCScore >= 80 ? 'bg-green-100 border-green-500 text-green-800' : 
+                    boxCScore >= 60 ? 'bg-yellow-100 border-yellow-500 text-yellow-800' : 
+                    'bg-red-100 border-red-500 text-red-800'
+                  }`}>
+                    ✨ {boxCScore}% HUMAN
+                  </div>
+                )}
+                {boxC.trim() && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => evaluateTextAI(boxC, setBoxCScore)}
+                    className="text-xs"
+                    data-testid="button-evaluate-box-c"
+                  >
+                    GPTZero Check
+                  </Button>
+                )}
+              </div>
+            </div>
             <Textarea
               value={boxC}
               onChange={(e) => setBoxC(e.target.value)}
