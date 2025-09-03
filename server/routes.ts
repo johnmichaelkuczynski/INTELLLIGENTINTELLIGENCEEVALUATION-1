@@ -1243,7 +1243,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
       console.log(`Starting fiction assessment with ${provider} for text of length: ${text.length}`);
       
       // Call the fiction assessment service directly and return JSON
-      const { performFictionAssessment } = require('./services/fictionAssessment');
+      const { performFictionAssessment } = await import('./services/fictionAssessment');
       const result = await performFictionAssessment(text, provider);
       
       console.log('Fiction Assessment Result:', result);
