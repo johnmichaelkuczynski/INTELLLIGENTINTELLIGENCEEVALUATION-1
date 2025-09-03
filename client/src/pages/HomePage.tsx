@@ -516,8 +516,8 @@ DOES THE AUTHOR USE OTHER AUTHORS TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          text: documentA.content,
-          instructions: instructionsToUse,
+          originalText: documentA.content,
+          customInstructions: instructionsToUse,
           provider: selectedProvider === "all" ? "zhi1" : selectedProvider
         }),
       });
