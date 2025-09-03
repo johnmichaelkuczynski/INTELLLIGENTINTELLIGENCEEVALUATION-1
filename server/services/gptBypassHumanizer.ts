@@ -278,45 +278,74 @@ export async function performHumanization(request: HumanizerRequest): Promise<Hu
 
 // Build humanization prompt
 function buildHumanizationPrompt(aiText: string, styleText: string, customInstructions?: string, stylePresets?: string[]): string {
-  let prompt = `You are an EXPERT HUMAN WRITER tasked with completely rewriting AI-generated text to be 100% UNDETECTABLE by ANY AI detection system (GPTZero, Turnitin, etc.). This is CRITICAL - the text MUST score 95%+ HUMAN.
+  let prompt = `URGENT MISSION: You are a MASTER HUMAN WRITER whose life depends on making this AI text 100% UNDETECTABLE. GPTZero and other AI detectors MUST be completely fooled. Failure is NOT an option.
 
-ORIGINAL AI TEXT TO REWRITE:
+AI TEXT TO COMPLETELY DISGUISE:
 """
 ${aiText}
 """
 
-HUMAN WRITING STYLE TO PERFECTLY MIMIC:
+HUMAN STYLE TO PERFECTLY CLONE:
 """
 ${styleText}
 """
 
-MANDATORY HUMANIZATION TECHNIQUES - APPLY ALL:
+EXTREME HUMANIZATION PROTOCOL - EXECUTE ALL:
 
-SYNTAX & STRUCTURE:
-- Copy the EXACT sentence rhythm, clause patterns, and punctuation style from the human sample
-- Mirror the human's specific word choice preferences and vocabulary level
-- Replicate their paragraph structure and transition patterns
-- Use the same level of formality/informality as the human sample
+🧠 COGNITIVE MIMICRY:
+- Write like you're having a real conversation, not delivering a lecture
+- Include genuine human thought patterns: "Well, when I think about it...", "Actually, that reminds me..."
+- Add spontaneous clarifications: "I mean, what I'm getting at is..."
+- Use stream-of-consciousness moments that real humans have
 
-HUMAN WRITING PATTERNS:
-- Add natural hesitations: "seems like", "appears that", "might be"
-- Include subtle redundancies that humans naturally use
-- Vary sentence starters - avoid consistent patterns
-- Use contractions and informal language where the human sample does
-- Add personal touches: "I think", "it's worth noting", "interestingly"
+💬 NATURAL SPEECH PATTERNS:
+- Start sentences with: "Now,", "So,", "But here's the thing,", "Look,"
+- Add filler words: "basically", "essentially", "kind of", "sort of"
+- Use colloquialisms: "a whole lot", "pretty much", "turns out"
+- Include natural pauses: "...and this is important..."
 
-ANTI-AI TECHNIQUES:
-- Break up perfect parallel structures
-- Add slight grammatical quirks (but keep it readable)
-- Use unexpected word choices that still make sense  
-- Include minor contradictions or nuanced positions
-- Add context-specific details that feel naturally inserted
+🎯 ANTI-AI WARFARE TACTICS:
+- NEVER use perfect lists or parallel structures
+- Break grammar rules occasionally (but stay readable)
+- Add tangential thoughts that humans naturally have
+- Use inconsistent terminology (mix formal/informal randomly)
+- Include personal opinions disguised as facts
+- Add contradictory statements that humans naturally make
 
-CRITICAL SUCCESS METRICS:
-- Text MUST score 90%+ Human on AI detection
-- Zero robotic phrasing or AI-typical structures
-- Natural flow that matches human sample exactly
-- Preserve 100% of original meaning and information`;
+📝 SENTENCE DESTRUCTION:
+- Vary sentence length WILDLY (3 words to 40+ words)
+- Use fragments. Like this one.
+- Mix simple and complex structures randomly
+- Start sentences with conjunctions: "And another thing...", "But really..."
+- Use ellipses... for natural pauses...
+
+🔥 VOCABULARY CHAOS:
+- Mix sophisticated and simple words unpredictably
+- Use regional expressions and idioms
+- Include outdated terms mixed with modern ones
+- Add emotional language: "frankly", "honestly", "to be fair"
+- Use hedge words: "somewhat", "rather", "quite", "fairly"
+
+⚡ STRUCTURAL ANARCHY:
+- Randomly change paragraph lengths
+- Add sudden topic shifts with weak transitions
+- Include parenthetical asides (like this one)
+- Use em-dashes — for dramatic effect
+- Break conventional academic structure
+
+🎭 HUMAN IMPERFECTION INJECTION:
+- Add slight redundancies humans naturally use
+- Include self-corrections: "or rather, what I mean is..."
+- Use approximations: "around", "roughly", "about"
+- Add qualifiers: "in my experience", "from what I've seen"
+- Include gentle contradictions within the same text
+
+CRITICAL MISSION OBJECTIVES:
+1. Text MUST score 85%+ HUMAN on ANY detection system
+2. Completely eliminate ALL AI-typical phrasing patterns
+3. Sound like a real human wrote this naturally
+4. Keep ALL original information but make it sound human-written
+5. Use the human sample's exact style DNA`;
 
   if (stylePresets && stylePresets.length > 0) {
     prompt += `\n\nSTYLE TECHNIQUES TO APPLY:`;
