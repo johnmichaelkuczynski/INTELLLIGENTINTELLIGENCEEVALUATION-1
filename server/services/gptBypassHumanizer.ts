@@ -276,11 +276,11 @@ export async function performHumanization(request: HumanizerRequest): Promise<Hu
   }
 }
 
-// Build rewrite prompt following the exact protocol
+// Build rewrite prompt following the EXACT protocol specification  
 function buildHumanizationPrompt(aiText: string, styleText: string, customInstructions?: string, stylePresets?: string[]): string {
-  let prompt = `Rewrite the following text to match the exact writing style of the provided sample with surgical precision. Clone the style at a molecular level while preserving all content.
+  let prompt = `TASK: You are a professional writer. Study the STYLE SAMPLE below and rewrite the TEXT using that exact writing style.
 
-STYLE SAMPLE TO CLONE:
+STYLE SAMPLE:
 """
 ${styleText}
 """
@@ -290,7 +290,15 @@ TEXT TO REWRITE:
 ${aiText}
 """
 
-TASK: Rewrite the text above to match the exact style of the sample. Copy the sample's sentence structure, vocabulary, tone, rhythm, and flow patterns precisely. Preserve all meaning and information from the original text.`;
+CRITICAL REQUIREMENTS:
+1. Study how the STYLE SAMPLE writer constructs sentences
+2. Copy their exact vocabulary level and word choices  
+3. Match their sentence rhythm and flow patterns
+4. Use their same tone and voice
+5. Preserve ALL meaning from the original text
+6. Write as if you ARE that style sample author
+
+The rewrite must read as if the same person who wrote the STYLE SAMPLE wrote it. Clone their style with surgical precision at a molecular level.`;
 
   if (stylePresets && stylePresets.length > 0) {
     prompt += `\n\nSTYLE TECHNIQUES TO APPLY:`;
