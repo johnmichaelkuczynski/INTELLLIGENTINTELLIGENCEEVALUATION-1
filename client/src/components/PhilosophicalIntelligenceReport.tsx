@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DocumentAnalysis } from '@/lib/types';
 import { MultiProviderResults } from './MultiProviderResults';
-import { cleanAIResponse } from '@/lib/textUtils';
+import { cleanAIResponse, formatForDisplay } from '@/lib/textUtils';
 import { Brain, TrendingUp, Target, Zap, Eye, Lightbulb, Maximize2, Scale } from 'lucide-react';
 
 // Provider name mapping
@@ -337,7 +337,7 @@ const PhilosophicalIntelligenceReport: React.FC<PhilosophicalIntelligenceReportP
                 <h4 className="font-semibold mb-3 text-orange-700 dark:text-orange-300">Detailed Case Assessment</h4>
                 <div className="prose prose-sm max-w-none text-gray-700 dark:text-gray-300">
                   <div className="whitespace-pre-line text-sm leading-relaxed">
-                    {cleanAIResponse(caseAssessment.detailedAssessment)}
+                    {formatForDisplay(caseAssessment.detailedAssessment)}
                   </div>
                 </div>
               </div>

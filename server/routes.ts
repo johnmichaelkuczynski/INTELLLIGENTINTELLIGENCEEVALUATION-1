@@ -42,14 +42,36 @@ function mapZhiToProvider(zhiName: string): string {
 
 // REAL-TIME STREAMING: Case Assessment for ALL ZHI providers
 async function streamCaseAssessment(text: string, provider: string, res: any, context?: string) {
-  let prompt = `Assess how well this text makes its case. Analyze argument effectiveness, proof quality, claim credibility:`;
+  let prompt = `Assess how well this text makes its case. Analyze argument effectiveness, proof quality, claim credibility and provide specific numerical scores.
+
+REQUIRED FORMAT:
+PROOF EFFECTIVENESS: [0-100]/100
+CLAIM CREDIBILITY: [0-100]/100  
+NON-TRIVIALITY: [0-100]/100
+PROOF QUALITY: [0-100]/100
+FUNCTIONAL WRITING: [0-100]/100
+OVERALL CASE SCORE: [0-100]/100
+
+Then provide detailed analysis organized into sections:
+
+**Strengths:**
+- [List key strengths]
+
+**Weaknesses:**  
+- [List key weaknesses]
+
+**Potential Counterarguments:**
+- [List potential counterarguments]
+
+**Conclusion:**
+[Final assessment]`;
   
   // Add context information if provided
   if (context && context.trim()) {
     prompt += `\n\nIMPORTANT CONTEXT: ${context.trim()}\n\nPlease adjust your evaluation approach based on this context. For example, if this is "an abstract" or "a fragment", do not penalize it for lacking full development that would be expected in a complete work.`;
   }
   
-  prompt += `\n\n${text}\n\nProvide detailed analysis of the argument's strengths and weaknesses.`;
+  prompt += `\n\nTEXT TO ASSESS:\n${text}`;
 
   if (provider === 'openai') {
     // ZHI 1: OpenAI streaming

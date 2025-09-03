@@ -94,8 +94,15 @@ export function cleanAIResponse(text: string): string {
 export function formatForDisplay(text: string): string {
   const cleaned = cleanAIResponse(text);
   
-  // Preserve paragraph breaks
+  // Preserve paragraph breaks and improve structure
   return cleaned
+    // Convert markdown-style headers to proper formatting
+    .replace(/\*\*(.*?)\*\*/g, '$1:') // **Strengths:** -> Strengths:
+    // Ensure proper line breaks after sections
+    .replace(/(Strengths|Weaknesses|Counterarguments|Conclusion):/gi, '\n\n$1:\n')
+    // Clean up bullet points
+    .replace(/^[\s]*[-*•]\s*/gm, '• ')
+    // Split into paragraphs and clean
     .split('\n\n')
     .map(paragraph => paragraph.trim())
     .filter(paragraph => paragraph.length > 0)
