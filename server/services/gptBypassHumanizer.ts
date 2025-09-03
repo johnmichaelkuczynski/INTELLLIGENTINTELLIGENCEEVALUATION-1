@@ -257,27 +257,36 @@ function buildHumanizationPrompt(aiText: string, styleText: string, customInstru
     styleInstructions = `\n\nAPPLY THESE SPECIFIC STYLE TRANSFORMATIONS:\n${stylePresets.map(preset => `• ${preset}`).join('\n')}\n`;
   }
   
-  let prompt = `You are an expert text humanizer. Your task is to rewrite AI-generated text to make it undetectable by AI detection tools while preserving all original meaning and information.
+  let prompt = `You are an expert stylistic replication system. Your task is to rewrite the AI text using the EXACT stylistic patterns, sentence structures, and linguistic characteristics of the human sample.
 
-ORIGINAL AI-WRITTEN TEXT TO HUMANIZE:
-"""
-${aiText}
-"""
-
-HUMAN WRITING STYLE TO MIMIC:
+HUMAN STYLE SAMPLE TO REPLICATE:
 """
 ${styleText}
 """
 
-TASK: Rewrite the AI text to match the exact writing style, tone, sentence structure, vocabulary patterns, and linguistic characteristics of the human sample. The goal is to make the rewritten text completely undetectable as AI-generated while preserving all original meaning.
+AI TEXT TO REWRITE:
+"""
+${aiText}
+"""
 
-CRITICAL REQUIREMENTS:
-1. Preserve ALL original information, facts, and meaning
-2. Match the human sample's style at a granular level
-3. Use natural human writing patterns and imperfections
-4. Vary sentence lengths and structures naturally
-5. Include subtle inconsistencies that humans naturally have
-6. Make the text pass AI detection with high human confidence`;
+CRITICAL ANALYSIS REQUIRED:
+1. SENTENCE PATTERNS: Identify the exact sentence structures in the human sample (length, complexity, clause patterns)
+2. VOCABULARY LEVEL: Match the precise vocabulary sophistication and word choices
+3. ARGUMENTATIVE FLOW: Replicate how the human sample builds and presents arguments
+4. TRANSITIONAL PHRASES: Use the same types of connective language and transitions
+5. PUNCTUATION STYLE: Mirror the punctuation patterns and preferences
+6. PARAGRAPH STRUCTURE: Follow the same organizational approach
+
+SURGICAL REPLICATION REQUIREMENTS:
+- Use the SAME sentence structure patterns as the human sample
+- Adopt the SAME argumentative/explanatory style
+- Mirror the SAME level of formality and complexity
+- Replicate the SAME types of qualifying phrases and hedges
+- Match the SAME rhythm and cadence of sentences
+- NEVER add casual conversational elements unless they exist in the human sample
+- NEVER change the sophistication level - maintain exact equivalence
+
+The rewritten text must read as if the SAME HUMAN who wrote the style sample also wrote this new content about the AI text's topic.`;
 
   if (stylePresets && stylePresets.length > 0) {
     prompt += `\n\nSTYLE TECHNIQUES TO APPLY:`;
@@ -294,7 +303,7 @@ CRITICAL REQUIREMENTS:
 ${customInstructions.trim()}`;
   }
 
-  prompt += `\n\nOUTPUT ONLY THE REWRITTEN TEXT - NO EXPLANATIONS OR COMMENTS:`;
+  prompt += `\n\nNOW REWRITE THE AI TEXT TO MATCH THE HUMAN SAMPLE'S STYLE EXACTLY. PRESERVE ALL ORIGINAL MEANING BUT TRANSFORM THE EXPRESSION TO MIRROR THE HUMAN'S PATTERNS. OUTPUT ONLY THE REWRITTEN TEXT:`;
 
   return prompt;
 }
