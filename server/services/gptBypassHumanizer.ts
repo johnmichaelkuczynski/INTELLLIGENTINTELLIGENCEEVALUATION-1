@@ -84,17 +84,7 @@ Structural understanding is always understanding of relationships. Observational
   "Epistemology": {
     "Rational Belief and Underlying Structure": `When would it become rational to believe that, next time, you're more likely than not to roll this as opposed to that number—that, for example, you're especially likely to roll a 27? This belief becomes rational when, and only when, you have reason to believe that a 27-roll is favored by the structures involved in the game. And that belief, in its turn, is rational if you know that circumstances at all like the following obtain: *The dice are magnetically attracted to the 27-slot. *On any given occasion, you have an unconscious intention to roll a 27 (even though you have no conscious intention of doing this), and you're such a talented dice-thrower that, if you can roll a 27 if it is your (subconscious) intention to do so. *The 27-slot is much bigger than any of the other slots. In fact, it takes up so much space on the roulette wheel that the remaining spaces are too small for the ball to fit into them. You are rational to believe that you'll continue to roll 27s to the extent that your having thus far rolled multiple 27s in a row gives you reason to believe there to be some underlying structure favoring that outcome. And to the extent that a long run of 27-rolls doesn't give you such a reason, you are irrational to believe that you're any more (or any less) likely to roll a 27 than you are any other number. So, no matter how many consecutive 27s you roll, if you know with certainty that there is no underlying structure that would favor such an outcome, then you have no more reason to expect a 27 than you are a 5 or a 32. Put pedantically, it is only insofar as you have reason to believe in such a structure that you have reason to expect something that has the property of being a die thrown by you to have the property of landing in the 27-slot.`,
 
-    "Knowledge vs. Awareness": `Knowledge is conceptually articulated awareness. In order for me to know that my shoes are uncomfortably tight, I need to have the concepts shoe, tight, discomfort, etc. I do not need to have these concepts—or, arguably, any concepts—to be aware of the uncomfortable tightness in my shoes. My knowledge of that truth is a conceptualization of my awareness of that state of affairs. Equivalently, there are two kinds of awareness: propositional and objectual. My visual perception of the dog in front of me is a case of objectual awareness, as is my awareness of the tightness of my shoes. My knowledge that there is a dog in front of me is a case of proposition-awareness, as is my knowledge that my shoes are uncomfortably tight. Truths, not objects, the objects of explanation. Observations are objectual awarenesses. The contents of such awarenesses must be converted into propositions if they are to be explained. This is because it is truths that are explained, and truths are true propositions.`,
-
-    "Hume, Induction, and Explanation": `We haven't yet refuted Hume's argument—we've only taken the first step towards doing so. Hume could defend his view against what we've said thus by far by saying the following: Suppose that, to explain why all phi's thus far known are psi's, you posit some underlying structure or law that disposes phi's to be psi's. Unless you think that nature is uniform, you have no right to expect that connection to continue to hold. But if, in order to deal with this, you suppose that nature is uniform, then you are making an inductive assumption. And inductive assumptions cannot be rationally justified. For an explanation to be good isn't for it to be correct. Sometimes the right explanations are bad ones. A story will make this clear. I'm on a bus. The bus driver is smiling. A mystery! 'What on Earth does he have to smile about?' I ask myself. His job is so boring, and his life must therefore be such a horror.' But then I remember that, just a minute ago, a disembarking passenger gave him fifty $100 bills as a tip. So I have my explanation: 'he just came into a lot of money.' But suppose that this explanation is false. Suppose that the driver is smiling because he is high on cocaine. Then my explanation is incorrect. But is it a bad explanation? It doesn't seem to be. It seems to be a good explanation that happens to be false.`,
-
-    "The Meaning of Meaning": `There would be no languages if there were no expressions (words, phrases, sentences, etc.). Nothing meaningless is an expression. For this reason, the concept of an expression must be understood in terms of the concept of meaning, the same therefore being true of the concept of language. But it isn't much use to be told that words and sentences "have meanings," since the word "meaning" has three different meanings, and only one of these directly relates to the nature of language. In some cases, to say that x "means" y is to say that x is evidence of y—that x and y are causally interrelated in such a way that, given x, it can reasonably be inferred that y. "Smith's hacking cough means that he has a violent lung infection" means "Smith's hacking cough is evidence that he has a violent lung infection." And the latter means that coughs like Smith's are causally connected to violent lung infections in such a way that it may reasonably be inferred that Smith has a violent lung infection. Smith's violent lung infection is a cause of Smith's hacking cough. But for x to be evidence to of y, it is neither necessary nor sufficient that y cause x.`,
-
-    "Linguistic vs. Psychological Meaning": `Some philosophers and linguists have held that for "Snow is white" to mean that snow is white is for it to be the case that, in uttering "snow is white," what people mean is that snow is white. This view, duly generalized, is that for a sentence S to have meaning M is for it to be the case that, in uttering S, people to mean M. This position is false. There are many sentences that have determinate meanings even though they've never been uttered before and, therefore, no one as of yet has ever meant anything by them. The sentence "The cube root of three is Sir Lawrence Olivier's favorite irrational number between one and four" has a determinate meaning, even though that sentence never probably has been uttered. Thus, meaning in the linguistic sense is not in all cases identical with meaning in the psychological sense. Psychological meaning presupposes linguistic meaning. What a person means when uttering a given sentence is a function of, among other things, his beliefs as to what that sentence already means.`,
-
-    "Causation and Events": `Causation a relation between events, not objects. If x causes y, then x and y are events. They are not are not rocks, trees, or snowmen. They are not things, in other words, at least not in the sense in which we will use that word. Though not themselves causes or effects, things have causal properties. The rock weighs three lbs.; and it is in virtue of this fact about the rock that certain events involving the rock have certain effects. But the rock per se is not a cause. Nor is the rock an effect. Obviously the rock's existence is the end-result of a series of events. But it is these events, not the rock per se, that are appropriately described as 'effects.' Notice that, while we would hesitate to describe the rock as an effect of the various events that led to its existence, we would not hesitate to describe the rock as the product of these events. Conditions, e.g. Smith's having high blood pressure, can be causes and effects. This is because conditions are event-pluralities and therefore events in their own right. But not all event-pluralities are conditions: a condition is a stable pattern of events. For your metabolic condition to remain unchanged is for the various events constitutive of it to continue to occur within certain limits; it is for your heart to continue to beat at a certain rate; it is for the cells composing your body to be duly oxygenated at regular intervals; etc.`,
-
-    "Direct and Indirect Knowledge": `Some knowledge is direct; some is indirect. Indirect knowledge is knowledge that is acquired through inference. To make an inference is to form a new belief on the basis of an old one. Inferences, when legitimate, are made in accordance with legitimate rules of inference. Rules of inference, when legitimate, correspond to dependence-relations. There are two kinds of dependence-relations: logical and causal. Logical dependence-relations hold among propositions. A proposition is a truth or a falsehood. Example of a logical dependence-relation: The proposition that x is a triangle cannot be true unless the proposition that x has three sides is true. Therefore, x's being a triangle depends on x's having three sides. Causal relations hold among states of affairs, not truths and falsehoods. (A state of affairs is anything that is in space-time.) Example of a causal dependence-relation: Smith cannot pass the class unless Smith studies. Therefore, Smith's passing depends on his studying. The first-dependence relation is interpropositional, i.e. it holds between propositions. The second is objectual, i.e. it holds between occupants of the space-time manifold and therefore between 'objects,' relative to some delineation of that term. The objects of knowledge are propositions. It isn't known unless it's believed and it isn't believed unless it's a proposition. One can be aware of non-propositions, e.g. rocks, trees, people, but one does not in the relevant sense know them. Rather, one knows truths about them. Some dependence-relations are known, not through sensory observation, but through conceptual analysis. Such truths are analytic, as opposed to empirical. Analytic knowledge is always knowledge of dependence-relations. Empirical knowledge can be either direct or indirect; the same is true of analytic knowledge.`
+    "Knowledge vs. Awareness": `Knowledge is conceptually articulated awareness. In order for me to know that my shoes are uncomfortably tight, I need to have the concepts shoe, tight, discomfort, etc. I do not need to have these concepts—or, arguably, any concepts—to be aware of the uncomfortable tightness in my shoes. My knowledge of that truth is a conceptualization of my awareness of that state of affairs. Equivalently, there are two kinds of awareness: propositional and objectual. My visual perception of the dog in front of me is a case of objectual awareness, as is my awareness of the tightness of my shoes. My knowledge that there is a dog in front of me is a case of proposition-awareness, as is my knowledge that my shoes are uncomfortably tight. Truths, not objects, the objects of explanation. Observations are objectual awarenesses. The contents of such awarenesses must be converted into propositions if they are to be explained. This is because it is truths that are explained, and truths are true propositions.`
   },
 
   "Paradoxes": {
@@ -200,31 +190,11 @@ export function chunkText(text: string, maxWords: number = 500): TextChunk[] {
 export async function evaluateWithGPTZero(text: string): Promise<number> {
   try {
     const result = await checkForAI({ content: text });
-    console.log(`GPTZero raw result:`, result);
-    
-    // Validate the probability value
-    let aiProbability = result.probability || 0;
-    
-    // Fix invalid probability values
-    if (typeof aiProbability !== 'number' || isNaN(aiProbability) || aiProbability < 0) {
-      console.log('Invalid AI probability, using fallback');
-      aiProbability = Math.random() * 0.3; // 0-30% AI probability
-    } else if (aiProbability > 1) {
-      // If it's a percentage instead of decimal, convert it
-      aiProbability = aiProbability / 100;
-    }
-    
-    // Convert AI probability to human percentage
-    const humanPercentage = Math.round((1 - aiProbability) * 100);
-    const finalScore = Math.max(1, Math.min(99, humanPercentage)); // 1-99% range
-    
-    console.log(`GPTZero: AI prob = ${aiProbability}, Human % = ${finalScore}`);
-    return finalScore;
-    
+    // GPTZero returns probability as decimal, convert to percentage
+    return Math.round((1 - result.probability) * 100); // Convert AI probability to human percentage
   } catch (error) {
     console.error('GPTZero evaluation failed:', error);
-    // Return realistic fallback score
-    return Math.floor(Math.random() * 40) + 60; // Random 60-99% Human
+    return 0; // Default to 0% if evaluation fails
   }
 }
 
@@ -276,29 +246,29 @@ export async function performHumanization(request: HumanizerRequest): Promise<Hu
   }
 }
 
-// Build rewrite prompt following the EXACT protocol specification  
+// Build humanization prompt
 function buildHumanizationPrompt(aiText: string, styleText: string, customInstructions?: string, stylePresets?: string[]): string {
-  let prompt = `TASK: You are a professional writer. Study the STYLE SAMPLE below and rewrite the TEXT using that exact writing style.
+  let prompt = `You are an expert text humanizer. Your task is to rewrite AI-generated text to make it undetectable by AI detection tools while preserving all original meaning and information.
 
-STYLE SAMPLE:
-"""
-${styleText}
-"""
-
-TEXT TO REWRITE:
+ORIGINAL AI-WRITTEN TEXT TO HUMANIZE:
 """
 ${aiText}
 """
 
-CRITICAL REQUIREMENTS:
-1. Study how the STYLE SAMPLE writer constructs sentences
-2. Copy their exact vocabulary level and word choices  
-3. Match their sentence rhythm and flow patterns
-4. Use their same tone and voice
-5. Preserve ALL meaning from the original text
-6. Write as if you ARE that style sample author
+HUMAN WRITING STYLE TO MIMIC:
+"""
+${styleText}
+"""
 
-The rewrite must read as if the same person who wrote the STYLE SAMPLE wrote it. Clone their style with surgical precision at a molecular level.`;
+TASK: Rewrite the AI text to match the exact writing style, tone, sentence structure, vocabulary patterns, and linguistic characteristics of the human sample. The goal is to make the rewritten text completely undetectable as AI-generated while preserving all original meaning.
+
+CRITICAL REQUIREMENTS:
+1. Preserve ALL original information, facts, and meaning
+2. Match the human sample's style at a granular level
+3. Use natural human writing patterns and imperfections
+4. Vary sentence lengths and structures naturally
+5. Include subtle inconsistencies that humans naturally have
+6. Make the text pass AI detection with high human confidence`;
 
   if (stylePresets && stylePresets.length > 0) {
     prompt += `\n\nSTYLE TECHNIQUES TO APPLY:`;

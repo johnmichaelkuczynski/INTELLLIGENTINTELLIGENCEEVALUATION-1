@@ -3,28 +3,12 @@ import { AIDetectionResult } from "@/lib/types";
 
 /**
  * Check if a text is AI-generated using GPTZero API
- * Can accept both DocumentInput format and simple content object
  */
-export async function checkForAI(input: DocumentInput | { content: string }): Promise<AIDetectionResult> {
+export async function checkForAI(document: DocumentInput): Promise<AIDetectionResult> {
   const apiKey = process.env.GPTZERO_API_KEY || "";
   
   if (!apiKey) {
-    console.log("GPTZero API key not found - using realistic mock response");
-    // Return realistic mock response for testing when API key is missing
-    const mockAIProbability = Math.random() * 0.4; // 0-40% AI probability
-    return {
-      isAI: mockAIProbability > 0.5,
-      probability: mockAIProbability // Already in 0-1 range
-    };
-  }
-
-  const content = 'content' in input ? input.content : input.content;
-  
-  if (!content || content.trim().length < 10) {
-    return {
-      isAI: false,
-      probability: 0
-    };
+    throw new Error("GPTZero API key not found");
   }
 
   try {
@@ -36,50 +20,33 @@ export async function checkForAI(input: DocumentInput | { content: string }): Pr
         "X-Api-Key": apiKey
       },
       body: JSON.stringify({
-        document: content,
+        document: document.content,
+        // Optional parameters
         truncation: true
       })
     });
 
     if (!response.ok) {
-      console.error(`GPTZero API error: ${response.status} ${response.statusText}`);
-      // Return fallback mock response with realistic AI probability
-      const mockAIProbability = Math.random() * 0.4; // 0-40% AI probability
-      return {
-        isAI: mockAIProbability > 0.5,
-        probability: mockAIProbability
-      };
+      throw new Error(`GPTZero API error: ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.log('GPTZero raw response:', data);
     
     // Extract probability from GPTZero response
-    let aiProbability = 0;
-    
-    if (data.documents && data.documents[0]) {
-      // GPTZero returns completely_generated_prob (0-1 scale for AI probability)
-      aiProbability = data.documents[0].completely_generated_prob || 0;
-    } else if (data.class_probabilities) {
-      // Alternative response format
-      aiProbability = data.class_probabilities.ai || 0;
-    }
-    
-    const isAI = aiProbability >= 0.5;
-    
-    console.log(`GPTZero result: AI probability = ${aiProbability}, isAI = ${isAI}`);
+    // Note: Actual response format may vary based on GPTZero API documentation
+    const probability = Math.round(data.documents[0].completely_generated_prob * 100);
+    const isAI = probability >= 50;
 
     return {
       isAI,
-      probability: aiProbability
+      probability
     };
   } catch (error) {
     console.error("Error checking for AI:", error);
-    // Return fallback mock response with realistic AI probability
-    const mockAIProbability = Math.random() * 0.4; // 0-40% AI probability
+    // Return a default result if the API call fails
     return {
-      isAI: mockAIProbability > 0.5,
-      probability: mockAIProbability
+      isAI: false,
+      probability: 0
     };
   }
 }
