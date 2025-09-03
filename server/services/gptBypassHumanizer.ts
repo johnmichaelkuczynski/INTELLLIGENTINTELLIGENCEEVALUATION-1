@@ -278,27 +278,45 @@ export async function performHumanization(request: HumanizerRequest): Promise<Hu
 
 // Build humanization prompt
 function buildHumanizationPrompt(aiText: string, styleText: string, customInstructions?: string, stylePresets?: string[]): string {
-  let prompt = `You are an expert text humanizer. Your task is to rewrite AI-generated text to make it undetectable by AI detection tools while preserving all original meaning and information.
+  let prompt = `You are an EXPERT HUMAN WRITER tasked with completely rewriting AI-generated text to be 100% UNDETECTABLE by ANY AI detection system (GPTZero, Turnitin, etc.). This is CRITICAL - the text MUST score 95%+ HUMAN.
 
-ORIGINAL AI-WRITTEN TEXT TO HUMANIZE:
+ORIGINAL AI TEXT TO REWRITE:
 """
 ${aiText}
 """
 
-HUMAN WRITING STYLE TO MIMIC:
+HUMAN WRITING STYLE TO PERFECTLY MIMIC:
 """
 ${styleText}
 """
 
-TASK: Rewrite the AI text to match the exact writing style, tone, sentence structure, vocabulary patterns, and linguistic characteristics of the human sample. The goal is to make the rewritten text completely undetectable as AI-generated while preserving all original meaning.
+MANDATORY HUMANIZATION TECHNIQUES - APPLY ALL:
 
-CRITICAL REQUIREMENTS:
-1. Preserve ALL original information, facts, and meaning
-2. Match the human sample's style at a granular level
-3. Use natural human writing patterns and imperfections
-4. Vary sentence lengths and structures naturally
-5. Include subtle inconsistencies that humans naturally have
-6. Make the text pass AI detection with high human confidence`;
+SYNTAX & STRUCTURE:
+- Copy the EXACT sentence rhythm, clause patterns, and punctuation style from the human sample
+- Mirror the human's specific word choice preferences and vocabulary level
+- Replicate their paragraph structure and transition patterns
+- Use the same level of formality/informality as the human sample
+
+HUMAN WRITING PATTERNS:
+- Add natural hesitations: "seems like", "appears that", "might be"
+- Include subtle redundancies that humans naturally use
+- Vary sentence starters - avoid consistent patterns
+- Use contractions and informal language where the human sample does
+- Add personal touches: "I think", "it's worth noting", "interestingly"
+
+ANTI-AI TECHNIQUES:
+- Break up perfect parallel structures
+- Add slight grammatical quirks (but keep it readable)
+- Use unexpected word choices that still make sense  
+- Include minor contradictions or nuanced positions
+- Add context-specific details that feel naturally inserted
+
+CRITICAL SUCCESS METRICS:
+- Text MUST score 90%+ Human on AI detection
+- Zero robotic phrasing or AI-typical structures
+- Natural flow that matches human sample exactly
+- Preserve 100% of original meaning and information`;
 
   if (stylePresets && stylePresets.length > 0) {
     prompt += `\n\nSTYLE TECHNIQUES TO APPLY:`;
