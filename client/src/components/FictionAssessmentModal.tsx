@@ -266,8 +266,8 @@ ${result.detailedAssessment}`;
                   <CardTitle>Detailed Assessment</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="prose prose-sm max-w-none">
-                    <pre className="whitespace-pre-wrap text-sm">
+                  <div className="prose max-w-none">
+                    <pre className="whitespace-pre-wrap text-base text-gray-900 dark:text-gray-100 font-medium leading-relaxed">
                       {result.detailedAssessment}
                     </pre>
                   </div>

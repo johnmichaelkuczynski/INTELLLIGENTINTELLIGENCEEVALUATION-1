@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import Anthropic from '@anthropic-ai/sdk';
 import fetch from 'node-fetch';
+import { cleanAIResponse } from '../lib/textUtils';
 
 // Initialize the API clients
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -81,12 +82,8 @@ Summary: [How effectively does this fiction construct a compelling reality?]
 Fiction sample to assess:`;
 
 function parseFictionAssessmentResponse(response: string): FictionAssessmentResult {
-  const cleanResponse = response
-    .replace(/\*\*/g, '')
-    .replace(/\*/g, '')
-    .replace(/#{1,6}\s/g, '')
-    .replace(/`{1,3}/g, '')
-    .trim();
+  // Use the enhanced cleanAIResponse function for aggressive markdown removal
+  const cleanResponse = cleanAIResponse(response);
 
   const extractScore = (section: string): number => {
     const patterns = [
