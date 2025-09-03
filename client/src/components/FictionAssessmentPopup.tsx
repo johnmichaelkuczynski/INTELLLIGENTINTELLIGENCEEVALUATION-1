@@ -184,7 +184,7 @@ ${fictionText}`;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold flex items-center gap-3">
             <BookOpen className="w-7 h-7 text-purple-600" />
@@ -192,7 +192,7 @@ ${fictionText}`;
           </DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-6">
+        <div className="space-y-6 overflow-y-auto flex-1 pr-2">
           {/* Input Section */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
